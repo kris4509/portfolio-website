@@ -156,27 +156,61 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // ===== Contact Form =====
+  // ===== Contact Form (Formspree) =====
+  const FORMSPREE_URL = 'https://formspree.io/f/xgoqazod';
   const form = document.getElementById('contact-form');
-  form?.addEventListener('submit', (e) => {
+
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = `<svg class="inline w-5 h-5 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>Sending...`;
-    btn.disabled = true;
+    const originalHTML = btn.innerHTML;
 
-    setTimeout(() => {
-      btn.innerHTML = `<svg class="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Message Sent!`;
-      btn.classList.remove('from-purple-600', 'to-cyan-500');
-      btn.classList.add('from-green-500', 'to-emerald-500');
-      setTimeout(() => {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        btn.classList.remove('from-green-500', 'to-emerald-500');
-        btn.classList.add('from-purple-600', 'to-cyan-500');
+    // Show loading state
+    btn.disabled = true;
+    btn.innerHTML = `<svg class="inline w-5 h-5 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>Sending...`;
+
+    try {
+      const response = await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      });
+
+      if (response.ok) {
+        // Success state
+        btn.innerHTML = `<svg class="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Message Sent!`;
+        btn.classList.remove('from-purple-600', 'to-cyan-500');
+        btn.classList.add('from-green-500', 'to-emerald-500');
         form.reset();
-      }, 3000);
-    }, 1500);
+
+        // Reset button after 4 seconds
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+          btn.classList.remove('from-green-500', 'to-emerald-500');
+          btn.classList.add('from-purple-600', 'to-cyan-500');
+          lucide.createIcons();
+        }, 4000);
+
+      } else {
+        throw new Error('Formspree returned an error');
+      }
+
+    } catch (error) {
+      console.error('Form submission error:', error);
+      // Error state
+      btn.innerHTML = `<svg class="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>Failed – Try Again`;
+      btn.classList.remove('from-purple-600', 'to-cyan-500');
+      btn.classList.add('from-red-500', 'to-rose-500');
+
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        btn.classList.remove('from-red-500', 'to-rose-500');
+        btn.classList.add('from-purple-600', 'to-cyan-500');
+        lucide.createIcons();
+      }, 4000);
+    }
   });
 
   // ===== Smooth Scroll for Anchor Links =====
