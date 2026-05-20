@@ -675,9 +675,53 @@
   </footer>
 
   <!-- Back to Top Button -->
-  <button id="back-to-top" class="back-to-top fixed bottom-8 right-8 p-3 bg-gradient-to-r from-purple-600 to-cyan-500 text-white rounded-full shadow-2xl z-50 hover:-translate-y-1 transition-all duration-300" aria-label="Back to top">
+  <button id="back-to-top" class="back-to-top fixed bottom-8 right-8 p-3 bg-gradient-to-r from-purple-600 to-cyan-500 text-white rounded-full shadow-2xl z-40 hover:-translate-y-1 transition-all duration-300" aria-label="Back to top">
     <i data-lucide="arrow-up" class="w-5 h-5"></i>
   </button>
+
+  <!-- Chat Widget Button -->
+  <button id="chat-widget-button" class="fixed bottom-8 left-8 p-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full shadow-2xl z-50 hover:-translate-y-1 hover:shadow-cyan-500/25 transition-all duration-300 group flex items-center justify-center" aria-label="Chat with CV">
+    <i data-lucide="message-circle" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+  </button>
+
+  <!-- Chat Widget Window -->
+  <div id="chat-widget-window" class="fixed bottom-24 left-8 w-[350px] sm:w-[400px] h-[500px] max-h-[80vh] glass rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-white/10 opacity-0 pointer-events-none translate-y-4 transition-all duration-300">
+    <!-- Chat Header -->
+    <div class="p-4 bg-slate-900/50 dark:bg-slate-800/80 border-b border-white/10 flex justify-between items-center backdrop-blur-md">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center p-0.5">
+          <img src="assets/images/profile.png" alt="Chris" class="w-full h-full rounded-full object-cover">
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-slate-800 dark:text-white">Chris's AI Assistant</h3>
+          <p class="text-xs text-green-500 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online</p>
+        </div>
+      </div>
+      <button id="chat-widget-close" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    
+    <!-- Chat Messages Area -->
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50 dark:bg-slate-900/50 scrollbar-thin">
+      <!-- Initial Greeting -->
+      <div class="flex justify-start">
+        <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 dark:border-slate-700 max-w-[85%]">
+          Hi! I'm Chris's AI assistant. You can ask me anything about his experience, skills, or projects. How can I help you?
+        </div>
+      </div>
+    </div>
+    
+    <!-- Chat Input Area -->
+    <div class="p-3 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+      <form id="chat-form" class="flex items-center gap-2">
+        <input type="text" id="chat-input" placeholder="Ask about my skills..." class="flex-1 bg-slate-100 dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200 px-4 py-2.5 rounded-full border-none focus:ring-2 focus:ring-cyan-500/50 outline-none placeholder:text-slate-400">
+        <button type="submit" id="chat-submit" class="w-10 h-10 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white flex items-center justify-center transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">
+          <i data-lucide="send" class="w-4 h-4 translate-x-px translate-y-px"></i>
+        </button>
+      </form>
+    </div>
+  </div>
 
   <!-- Initialize Lucide Icons & Custom Scripts -->
   <script>

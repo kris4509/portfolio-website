@@ -187,4 +187,103 @@ document.addEventListener('DOMContentLoaded', () => {
       target?.scrollIntoView({ behavior: 'smooth' });
     });
   });
+
+  // ===== Chat Widget Logic =====
+  const chatButton = document.getElementById('chat-widget-button');
+  const chatWindow = document.getElementById('chat-widget-window');
+  const chatClose = document.getElementById('chat-widget-close');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  const chatMessages = document.getElementById('chat-messages');
+  const chatSubmit = document.getElementById('chat-submit');
+
+  let isChatOpen = false;
+
+  const toggleChat = () => {
+    isChatOpen = !isChatOpen;
+    if (isChatOpen) {
+      chatWindow.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      chatWindow.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+      setTimeout(() => chatInput.focus(), 300);
+    } else {
+      chatWindow.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      chatWindow.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+    }
+  };
+
+  chatButton?.addEventListener('click', toggleChat);
+  chatClose?.addEventListener('click', toggleChat);
+
+  const addMessage = (text, isUser = false) => {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+    
+    const innerDiv = document.createElement('div');
+    innerDiv.className = isUser 
+      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%]'
+      : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 dark:border-slate-700 max-w-[85%]';
+    innerDiv.innerHTML = text; // allow basic formatting if needed
+    
+    msgDiv.appendChild(innerDiv);
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  };
+
+  const showTyping = () => {
+    const id = 'typing-' + Date.now();
+    const msgDiv = document.createElement('div');
+    msgDiv.id = id;
+    msgDiv.className = 'flex justify-start';
+    msgDiv.innerHTML = `
+      <div class="bg-white dark:bg-slate-800 text-slate-500 text-sm p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 dark:border-slate-700 max-w-[85%] flex items-center gap-1">
+        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+      </div>`;
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return id;
+  };
+
+  const removeTyping = (id) => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  };
+
+  chatForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    // Add user message
+    addMessage(message, true);
+    chatInput.value = '';
+    chatSubmit.disabled = true;
+
+    // Show typing indicator
+    const typingId = showTyping();
+
+    try {
+      // Call Vercel serverless API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+
+      if (!response.ok) throw new Error('API Error');
+      
+      const data = await response.json();
+      removeTyping(typingId);
+      addMessage(data.reply);
+      
+    } catch (error) {
+      console.error('Chat error:', error);
+      removeTyping(typingId);
+      addMessage('Sorry, I am having trouble connecting to my brain right now. Please try reaching out via the contact form!', false);
+    } finally {
+      chatSubmit.disabled = false;
+    }
+  });
+
 });
