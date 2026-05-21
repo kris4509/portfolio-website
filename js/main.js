@@ -248,16 +248,32 @@ document.addEventListener('DOMContentLoaded', () => {
   chatButton?.addEventListener('click', toggleChat);
   chatClose?.addEventListener('click', toggleChat);
 
+  // Strip markdown symbols from AI responses
+  const cleanMarkdown = (text) => {
+    return text
+      .replace(/\*\*(.+?)\*\*/g, '$1')   // bold **text**
+      .replace(/\*(.+?)\*/g, '$1')        // italic *text*
+      .replace(/`(.+?)`/g, '$1')          // inline code `text`
+      .replace(/^#{1,6}\s+/gm, '')        // headings # ## ###
+      .replace(/^\s*[-*+]\s+/gm, '• ')   // bullet points - or * or +
+      .replace(/^\s*\d+\.\s+/gm, '')      // numbered lists 1. 2.
+      .replace(/\n{3,}/g, '\n\n')         // excessive newlines
+      .trim();
+  };
+
   const addMessage = (text, isUser = false) => {
     const msgDiv = document.createElement('div');
     msgDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
-    
+
     const innerDiv = document.createElement('div');
-    innerDiv.className = isUser 
+    innerDiv.className = isUser
       ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%]'
       : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 dark:border-slate-700 max-w-[85%]';
-    innerDiv.innerHTML = text; // allow basic formatting if needed
-    
+
+    const cleaned = isUser ? text : cleanMarkdown(text);
+    // Convert newlines to <br> for display
+    innerDiv.innerHTML = cleaned.replace(/\n/g, '<br>');
+
     msgDiv.appendChild(innerDiv);
     chatMessages.appendChild(msgDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
