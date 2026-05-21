@@ -222,6 +222,65 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ===== Built-in Assistant (client-side fallback) =====
+  const info = {
+    email:     "chrispermwash@gmail.com",
+    github:    "github.com/kris4509",
+    education: "Bachelor of Science in Computer Science at Egerton University, Kenya (2023 – 2027)",
+    skills:    "Python, HTML, CSS, JavaScript, Flask, SQL, Git and GitHub, Microsoft Office, and Google Workspace",
+    available: "open to freelance work, internships, remote gigs, AI training, data annotation, and entry-level tech roles",
+    strengths: "quick learner, detail-oriented, self-motivated, good communicator, and a strong team collaborator",
+  };
+
+  function builtInReply(message) {
+    const msg = message.toLowerCase().trim();
+    const has = (keywords) => keywords.some(k => msg.includes(k));
+
+    if (has(["hi","hello","hey","good morning","good afternoon","howdy","greetings"]))
+      return `Hi there! I am Chris's assistant. You can ask me about his skills, projects, education, or how to get in touch. What would you like to know?`;
+
+    if (has(["who is","about chris","tell me","introduce","background","yourself"]))
+      return `Chris is a Computer Science student and web developer based in Nairobi, Kenya. He is studying for a ${info.education} and is ${info.available}.`;
+
+    if (has(["skill","tech","stack","tools","proficient","expertise","technologies","know","language"]))
+      return `Chris is proficient in ${info.skills}. He enjoys building full-stack web projects and is always picking up new tools quickly.`;
+
+    if (has(["project","built","made","ecommerce","lecture","fund","portfolio","work"]))
+      return `Chris has built several projects including a responsive Portfolio Website deployed on Vercel, a Bead Artwork Ecommerce site for Kenyan handcrafted beadwork, a Lecture Management and Scheduling System, and a Student Funds Management System concept.`;
+
+    if (has(["education","university","degree","study","egerton","school","college","student"]))
+      return `Chris is studying for a ${info.education}. His coursework covers Programming, Software Engineering, Database Systems, Data Structures, Algorithms, and Web Development.`;
+
+    if (has(["contact","reach","email","hire","get in touch","message","connect"]))
+      return `You can reach Chris at ${info.email} or use the Contact section on this page to send him a message directly.`;
+
+    if (has(["available","freelance","internship","remote","job","opportunity","open to"]))
+      return `Yes! Chris is currently ${info.available}. Reach out at ${info.email} if you have a matching opportunity.`;
+
+    if (has(["github","code","repository","repo"]))
+      return `Check out Chris's code on GitHub at ${info.github}. He has several projects there including his portfolio and ecommerce website.`;
+
+    if (has(["location","where","country","kenya","nairobi","based"]))
+      return `Chris is based in Nairobi, Kenya and is fully comfortable with remote work and online collaboration.`;
+
+    if (has(["strength","soft skill","personality","trait","quality"]))
+      return `Chris's key strengths are that he is a ${info.strengths}. He adapts quickly to new tools and environments.`;
+
+    if (has(["experience","work history","career","professional"]))
+      return `Chris has been building web projects since 2022 as a freelance developer, using modern workflows like Git, GitHub, and Vercel deployments.`;
+
+    if (has(["speak","english","swahili"]))
+      return `Chris is fluent in both English and Swahili.`;
+
+    if (has(["thank","thanks","appreciate","great","awesome","nice","cool"]))
+      return `You are welcome! Feel free to ask me anything else about Chris.`;
+
+    if (has(["bye","goodbye","see you","later"]))
+      return `Goodbye! Come back anytime if you have more questions. Have a great day!`;
+
+    return `I am only trained on Chris's professional background. Ask me about his skills, projects, education, or availability. For anything else, contact him at ${info.email}.`;
+  }
+
   // ===== Chat Widget Logic =====
   const chatButton = document.getElementById('chat-widget-button');
   const chatWindow = document.getElementById('chat-widget-window');
@@ -248,32 +307,26 @@ document.addEventListener('DOMContentLoaded', () => {
   chatButton?.addEventListener('click', toggleChat);
   chatClose?.addEventListener('click', toggleChat);
 
-  // Strip markdown symbols from AI responses
-  const cleanMarkdown = (text) => {
-    return text
-      .replace(/\*\*(.+?)\*\*/g, '$1')   // bold **text**
-      .replace(/\*(.+?)\*/g, '$1')        // italic *text*
-      .replace(/`(.+?)`/g, '$1')          // inline code `text`
-      .replace(/^#{1,6}\s+/gm, '')        // headings # ## ###
-      .replace(/^\s*[-*+]\s+/gm, '• ')   // bullet points - or * or +
-      .replace(/^\s*\d+\.\s+/gm, '')      // numbered lists 1. 2.
-      .replace(/\n{3,}/g, '\n\n')         // excessive newlines
-      .trim();
-  };
+  // Strip markdown from AI responses
+  const cleanMarkdown = (text) => text
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/`(.+?)`/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^\s*[-*+]\s+/gm, '')
+    .replace(/^\s*\d+\.\s+/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 
   const addMessage = (text, isUser = false) => {
     const msgDiv = document.createElement('div');
     msgDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
-
     const innerDiv = document.createElement('div');
     innerDiv.className = isUser
       ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm p-3 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%]'
       : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 dark:border-slate-700 max-w-[85%]';
-
     const cleaned = isUser ? text : cleanMarkdown(text);
-    // Convert newlines to <br> for display
     innerDiv.innerHTML = cleaned.replace(/\n/g, '<br>');
-
     msgDiv.appendChild(innerDiv);
     chatMessages.appendChild(msgDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -285,55 +338,51 @@ document.addEventListener('DOMContentLoaded', () => {
     msgDiv.id = id;
     msgDiv.className = 'flex justify-start';
     msgDiv.innerHTML = `
-      <div class="bg-white dark:bg-slate-800 text-slate-500 text-sm p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 dark:border-slate-700 max-w-[85%] flex items-center gap-1">
+      <div class="bg-white dark:bg-slate-800 text-slate-500 text-sm p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-1">
         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
-        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay:0.1s"></div>
+        <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay:0.2s"></div>
       </div>`;
     chatMessages.appendChild(msgDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     return id;
   };
 
-  const removeTyping = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.remove();
-  };
+  const removeTyping = (id) => document.getElementById(id)?.remove();
 
   chatForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const message = chatInput.value.trim();
     if (!message) return;
 
-    // Add user message
     addMessage(message, true);
     chatInput.value = '';
     chatSubmit.disabled = true;
-
-    // Show typing indicator
     const typingId = showTyping();
 
+    // Try Gemini API first — fall back to built-in instantly if it fails
+    let reply = null;
     try {
-      // Call Vercel serverless API
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ message }),
+        signal: AbortSignal.timeout(6000) // give Gemini 6 seconds max
       });
-
-      if (!response.ok) throw new Error('API Error');
-      
-      const data = await response.json();
-      removeTyping(typingId);
-      addMessage(data.reply);
-      
-    } catch (error) {
-      console.error('Chat error:', error);
-      removeTyping(typingId);
-      addMessage('Sorry, I am having trouble connecting to my brain right now. Please try reaching out via the contact form!', false);
-    } finally {
-      chatSubmit.disabled = false;
+      if (response.ok) {
+        const data = await response.json();
+        if (data.reply) reply = data.reply;
+      }
+    } catch (_) {
+      // Gemini failed or timed out — built-in takes over below
     }
+
+    // If Gemini didn't deliver, use built-in assistant
+    if (!reply) reply = builtInReply(message);
+
+    removeTyping(typingId);
+    addMessage(reply);
+    chatSubmit.disabled = false;
   });
 
 });
