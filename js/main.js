@@ -42,18 +42,28 @@ document.addEventListener('DOMContentLoaded', () => {
   mobileOverlay?.addEventListener('click', closeMenu);
   mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
 
+  // ===== Throttled scroll handler (single rAF loop for ALL scroll work) =====
+  let scrollRAF = false;
+  function onScroll() {
+    if (!scrollRAF) {
+      scrollRAF = true;
+      requestAnimationFrame(() => {
+        handleNavScroll();
+        updateActiveNav();
+        scrollRAF = false;
+      });
+    }
+  }
+
   // ===== Navbar Scroll Effect =====
   const navbar = document.getElementById('navbar');
   function handleNavScroll() {
     navbar?.classList.toggle('scrolled', window.scrollY > 50);
   }
-  window.addEventListener('scroll', handleNavScroll);
-  handleNavScroll();
 
   // ===== Active Nav Link =====
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-link');
-
   function updateActiveNav() {
     const scrollY = window.scrollY + 100;
     sections.forEach(section => {
@@ -67,7 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-  window.addEventListener('scroll', updateActiveNav);
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  handleNavScroll();
+  updateActiveNav();
 
   // ===== Scroll Reveal (Intersection Observer) =====
   const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
