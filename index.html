@@ -393,217 +393,207 @@
 
   <!-- Skills Section -->
   <section id="skills" class="py-24 px-6 max-w-7xl mx-auto">
-    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
-      <div class="flex items-center justify-center space-x-2 mb-4">
-        <span class="h-0.5 w-8 bg-purple-600"></span>
-        <span class="font-display font-semibold tracking-wider text-sm uppercase text-purple-600 dark:text-purple-400">My Expertise</span>
-        <span class="h-0.5 w-8 bg-purple-600"></span>
-      </div>
-      <h3 class="text-3xl md:text-4xl font-display font-bold mb-4">
-        Languages & Technologies I Use
-      </h3>
-      <p class="text-slate-600 dark:text-slate-400 text-sm md:text-base">
-        A representation of the languages and frameworks I've worked with, showcasing my skills in frontend, backend, and core CS fundamentals.
-      </p>
+    <div class="text-center max-w-3xl mx-auto mb-12 reveal">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-xs font-semibold tracking-widest uppercase mb-4">My Expertise</span>
+      <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Skills & <span class="gradient-text">Technologies</span></h2>
+      <p class="text-slate-600 dark:text-slate-400 text-sm md:text-base">Click a category to explore my tech stack</p>
     </div>
 
-    <!-- Skills Grid -->
-    <div class="space-y-10">
+    <!-- Category Tabs -->
+    <div class="flex flex-wrap justify-center gap-3 mb-12 reveal">
+      <button onclick="switchSkillTab('languages')" id="tab-languages"
+        class="skill-tab active-tab px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2 transition-all duration-300 border">
+        <i data-lucide="code-2" class="w-4 h-4"></i> Languages & Frameworks
+      </button>
+      <button onclick="switchSkillTab('databases')" id="tab-databases"
+        class="skill-tab px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2 transition-all duration-300 border border-white/10 glass text-slate-500 dark:text-slate-400">
+        <i data-lucide="database" class="w-4 h-4"></i> Databases
+      </button>
+      <button onclick="switchSkillTab('tools')" id="tab-tools"
+        class="skill-tab px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2 transition-all duration-300 border border-white/10 glass text-slate-500 dark:text-slate-400">
+        <i data-lucide="wrench" class="w-4 h-4"></i> Dev Tools & Platforms
+      </button>
+    </div>
 
-      <!-- Languages & Frameworks -->
-      <div>
-        <h3 class="text-sm font-semibold text-purple-500 uppercase tracking-widest mb-5 flex items-center gap-2">
-          <i data-lucide="code-2" class="w-4 h-4"></i> Languages & Frameworks
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Skills Panels -->
+    <div class="relative min-h-[320px]">
 
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-orange-500/10 text-orange-500 rounded-2xl skill-icon">
-                <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2l1.8 17.2 7.2 2.8 7.2-2.8L21 2H3z"/><path d="M12 5.5H7.5l.4 4.5H12"/><path d="M12 14.5l-3-.8-.2-2H6.6l.4 4.3 5 1.5"/><path d="M12 5.5h4.5l-.4 4.5H12v4.5"/><path d="M12 14.5l3-.8.3-3h2.2l-.5 5.3-5 1.5v-3z"/></svg>
-              </div>
-              <div><h4 class="font-display font-bold text-lg">HTML5</h4><span class="text-xs text-slate-500 dark:text-slate-400">Semantic & Accessibility</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>95%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="95"></div></div>
+      <!-- LANGUAGES PANEL -->
+      <div id="panel-languages" class="skill-panel grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 transition-all duration-500">
+        <!-- HTML5 -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-orange-400/40 hover:-translate-y-1 transition-all duration-300 group">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="10" class="skill-ring-fill transition-all duration-1000"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-xs font-bold text-orange-400">95%</span>
             </div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-100">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-blue-500/10 text-blue-400 rounded-2xl skill-icon"><i data-lucide="palette" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">CSS3 & Tailwind</h4><span class="text-xs text-slate-500 dark:text-slate-400">Modern Layouts & Frameworks</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>90%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="90"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">HTML5</p><p class="text-xs text-slate-500">Semantic</p></div>
+        </div>
+        <!-- CSS3 -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-blue-400/40 hover:-translate-y-1 transition-all duration-300 group">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="20" class="skill-ring-fill transition-all duration-1000"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-blue-400">90%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-200">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-yellow-500/10 text-yellow-500 rounded-2xl skill-icon"><i data-lucide="code" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">JavaScript (ES6+)</h4><span class="text-xs text-slate-500 dark:text-slate-400">Interactivity & Web APIs</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>85%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="85"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">CSS3</p><p class="text-xs text-slate-500">Tailwind</p></div>
+        </div>
+        <!-- JavaScript -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-yellow-400/40 hover:-translate-y-1 transition-all duration-300 group">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#eab308" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="30" class="skill-ring-fill transition-all duration-1000"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-yellow-400">85%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-300">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-indigo-500/10 text-indigo-400 rounded-2xl skill-icon"><i data-lucide="file-code" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">Python & Flask</h4><span class="text-xs text-slate-500 dark:text-slate-400">Backend & Web Development</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>80%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="80"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">JavaScript</p><p class="text-xs text-slate-500">ES6+</p></div>
+        </div>
+        <!-- Python -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-indigo-400/40 hover:-translate-y-1 transition-all duration-300 group">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#6366f1" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="40" class="skill-ring-fill transition-all duration-1000"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-indigo-400">80%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-400">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-red-500/10 text-red-500 rounded-2xl skill-icon"><i data-lucide="coffee" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">Java</h4><span class="text-xs text-slate-500 dark:text-slate-400">OOP & Application Dev</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>75%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="75"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">Python</p><p class="text-xs text-slate-500">Flask</p></div>
+        </div>
+        <!-- Java -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-red-400/40 hover:-translate-y-1 transition-all duration-300 group">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#ef4444" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="50" class="skill-ring-fill transition-all duration-1000"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-red-400">75%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-500">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-cyan-500/10 text-cyan-400 rounded-2xl skill-icon"><i data-lucide="atom" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">Bootstrap 5</h4><span class="text-xs text-slate-500 dark:text-slate-400">Responsive UI Framework</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>85%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="85"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">Java</p><p class="text-xs text-slate-500">OOP</p></div>
+        </div>
+        <!-- Bootstrap -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-purple-400/40 hover:-translate-y-1 transition-all duration-300 group">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#a855f7" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="30" class="skill-ring-fill transition-all duration-1000"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-purple-400">85%</span></div>
           </div>
-
+          <div class="text-center"><p class="font-bold text-sm">Bootstrap 5</p><p class="text-xs text-slate-500">Responsive</p></div>
         </div>
       </div>
 
-      <!-- Databases -->
-      <div>
-        <h3 class="text-sm font-semibold text-cyan-500 uppercase tracking-widest mb-5 flex items-center gap-2">
-          <i data-lucide="database" class="w-4 h-4"></i> Databases
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-orange-500/10 text-orange-400 rounded-2xl skill-icon"><i data-lucide="database" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">MySQL</h4><span class="text-xs text-slate-500 dark:text-slate-400">Relational Database Design</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>78%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="78"></div></div>
-            </div>
+      <!-- DATABASES PANEL -->
+      <div id="panel-databases" class="skill-panel hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6 transition-all duration-500 max-w-2xl mx-auto">
+        <!-- MySQL -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-orange-400/40 hover:-translate-y-1 transition-all duration-300">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="44" class="skill-ring-fill"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-orange-400">78%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-100">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-purple-500/10 text-purple-400 rounded-2xl skill-icon"><i data-lucide="layers" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">SQLAlchemy ORM</h4><span class="text-xs text-slate-500 dark:text-slate-400">Database Abstraction Layer</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>72%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="72"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">MySQL</p><p class="text-xs text-slate-500">Relational DB</p></div>
+        </div>
+        <!-- SQLAlchemy -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-purple-400/40 hover:-translate-y-1 transition-all duration-300">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#a855f7" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="56" class="skill-ring-fill"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-purple-400">72%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-200">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-blue-500/10 text-blue-400 rounded-2xl skill-icon"><i data-lucide="file-spreadsheet" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">SQL</h4><span class="text-xs text-slate-500 dark:text-slate-400">Queries, Joins & Indexing</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>80%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="80"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">SQLAlchemy</p><p class="text-xs text-slate-500">ORM</p></div>
+        </div>
+        <!-- SQL -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-blue-400/40 hover:-translate-y-1 transition-all duration-300">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="40" class="skill-ring-fill"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-blue-400">80%</span></div>
           </div>
-
+          <div class="text-center"><p class="font-bold text-sm">SQL</p><p class="text-xs text-slate-500">Queries & Joins</p></div>
         </div>
       </div>
 
-      <!-- Developer Tools & Platforms -->
-      <div>
-        <h3 class="text-sm font-semibold text-green-500 uppercase tracking-widest mb-5 flex items-center gap-2">
-          <i data-lucide="wrench" class="w-4 h-4"></i> Developer Tools & Platforms
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-slate-500/10 text-slate-400 rounded-2xl skill-icon"><i data-lucide="git-branch" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">Git & GitHub</h4><span class="text-xs text-slate-500 dark:text-slate-400">Version Control & Collaboration</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>88%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="88"></div></div>
-            </div>
+      <!-- TOOLS PANEL -->
+      <div id="panel-tools" class="skill-panel hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 transition-all duration-500">
+        <!-- Git & GitHub -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-slate-400/40 hover:-translate-y-1 transition-all duration-300">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#94a3b8" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="24" class="skill-ring-fill"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-slate-400">88%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-100">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-black/20 text-white rounded-2xl skill-icon"><i data-lucide="triangle" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">Vercel</h4><span class="text-xs text-slate-500 dark:text-slate-400">Hosting & CI/CD Deployment</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>85%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="85"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">Git & GitHub</p><p class="text-xs text-slate-500">Version Control</p></div>
+        </div>
+        <!-- Vercel -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-white/40 hover:-translate-y-1 transition-all duration-300">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="30" class="skill-ring-fill"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-slate-300">85%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-200">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-purple-500/10 text-purple-400 rounded-2xl skill-icon"><i data-lucide="globe" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">GitHub Pages</h4><span class="text-xs text-slate-500 dark:text-slate-400">Static Site Hosting</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>90%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="90"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">Vercel</p><p class="text-xs text-slate-500">CI/CD Deploy</p></div>
+        </div>
+        <!-- GitHub Pages -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-purple-400/40 hover:-translate-y-1 transition-all duration-300">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#a855f7" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="20" class="skill-ring-fill"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-purple-400">90%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-300">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-blue-500/10 text-blue-400 rounded-2xl skill-icon"><i data-lucide="terminal" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">Linux & Terminal</h4><span class="text-xs text-slate-500 dark:text-slate-400">CLI, Shell Scripting & OS</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>70%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="70"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">GitHub Pages</p><p class="text-xs text-slate-500">Static Host</p></div>
+        </div>
+        <!-- Linux -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-blue-400/40 hover:-translate-y-1 transition-all duration-300">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="60" class="skill-ring-fill"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-blue-400">70%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-400">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-green-500/10 text-green-400 rounded-2xl skill-icon"><i data-lucide="cpu" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">REST APIs</h4><span class="text-xs text-slate-500 dark:text-slate-400">API Design & Integration</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>78%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="78"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">Linux</p><p class="text-xs text-slate-500">Terminal & CLI</p></div>
+        </div>
+        <!-- REST APIs -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-green-400/40 hover:-translate-y-1 transition-all duration-300">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="44" class="skill-ring-fill"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-green-400">78%</span></div>
           </div>
-
-          <div class="glass p-6 rounded-3xl border border-white/10 skill-card reveal delay-500">
-            <div class="flex items-center space-x-4 mb-4">
-              <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-2xl skill-icon"><i data-lucide="smartphone" class="w-8 h-8"></i></div>
-              <div><h4 class="font-display font-bold text-lg">M-Pesa Daraja API</h4><span class="text-xs text-slate-500 dark:text-slate-400">Mobile Payment Integration</span></div>
-            </div>
-            <div class="space-y-2">
-              <div class="flex justify-between text-xs font-semibold"><span>Proficiency</span><span>72%</span></div>
-              <div class="skill-progress"><div class="skill-progress-bar" data-progress="72"></div></div>
-            </div>
+          <div class="text-center"><p class="font-bold text-sm">REST APIs</p><p class="text-xs text-slate-500">Design & Use</p></div>
+        </div>
+        <!-- M-Pesa -->
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:border-emerald-400/40 hover:-translate-y-1 transition-all duration-300">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="56" class="skill-ring-fill"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center"><span class="text-xs font-bold text-emerald-400">72%</span></div>
           </div>
-
+          <div class="text-center"><p class="font-bold text-sm">M-Pesa API</p><p class="text-xs text-slate-500">Daraja STK</p></div>
         </div>
       </div>
 

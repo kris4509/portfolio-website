@@ -498,3 +498,35 @@ if (track && dots.length) {
     dot.style.cursor = 'pointer';
   });
 }
+
+// ===== Skills Tab Switcher =====
+function switchSkillTab(tab) {
+  const tabs   = ['languages', 'databases', 'tools'];
+  const panels = ['languages', 'databases', 'tools'];
+
+  tabs.forEach(t => {
+    const btn = document.getElementById('tab-' + t);
+    if (!btn) return;
+    if (t === tab) {
+      btn.classList.add('active-tab');
+      btn.classList.remove('glass', 'text-slate-500', 'dark:text-slate-400', 'border-white/10');
+    } else {
+      btn.classList.remove('active-tab');
+      btn.classList.add('glass', 'text-slate-500', 'border-white/10');
+    }
+  });
+
+  panels.forEach(p => {
+    const panel = document.getElementById('panel-' + p);
+    if (!panel) return;
+    if (p === tab) {
+      panel.classList.remove('hidden');
+      // Re-trigger animation
+      panel.style.animation = 'none';
+      panel.offsetHeight;
+      panel.style.animation = '';
+    } else {
+      panel.classList.add('hidden');
+    }
+  });
+}
