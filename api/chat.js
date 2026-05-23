@@ -30,12 +30,15 @@ Context about Chris:
 - GitHub: github.com/kris4509
 - Portfolio: kris-portfolio-website.vercel.app
 - Education: BSc Computer Science at Egerton University, Kenya (2023 – 2027)
-- Skills: Python, HTML, CSS, JavaScript, Flask, SQL, Git and GitHub, Microsoft Office, Google Workspace
+- Skills: Python, Flask, Java, HTML5, CSS3, Tailwind CSS, Bootstrap 5, JavaScript, MySQL, SQLAlchemy ORM, SQL, Git and GitHub, Vercel, GitHub Pages, Linux Terminal, REST APIs, M-Pesa Daraja API
 - Projects:
-  1. Portfolio Website — responsive personal portfolio with dark/light mode, AI chat, Formspree contact form, deployed on Vercel.
-  2. Bead Artwork Ecommerce Website — frontend ecommerce site for Kenyan handcrafted beadwork with product catalog and WhatsApp ordering.
-  3. Lecture Management and Scheduling System — university scheduling concept with venue management and clash detection using Python and database design.
-  4. Student Funds Management System — concept for tracking student pocket money tailored to Kenyan schools.
+  1. Portfolio Website — responsive personal portfolio with dark/light mode, AI chat, download CV, certifications section, Formspree contact form, deployed on Vercel.
+  2. UniFlow Exam Card System — university web app where students digitally submit exam cards to their class rep for bulk printing and dean stamping. Built with Python Flask, MySQL, Bootstrap 5, SQLAlchemy ORM, and M-Pesa Daraja API for payments.
+  3. Bead Artwork Ecommerce Website — frontend ecommerce site for Kenyan handcrafted beadwork with product catalog, WhatsApp ordering, and lightbox gallery.
+  4. Lecture Management and Scheduling System — university scheduling concept with venue management and clash detection using Python and database design.
+  5. Student Funds Management System — concept for tracking student pocket money tailored to Kenyan schools.
+- Certifications (all W3Schools Professional level, 2024): Certified JavaScript Developer, Certified Python Developer, Certified React Developer, Certified Cybersecurity Professional, Certified Java Developer.
+- Developer Tools: Git and GitHub, Vercel, GitHub Pages, Linux Terminal, REST APIs, M-Pesa Daraja API.
 - Experience: Freelance web developer and self-taught programmer since 2022.
 - Availability: Open to remote work, internships, freelance, AI training, data annotation, and entry-level tech roles.
 - Languages: English and Swahili.

@@ -227,9 +227,18 @@ document.addEventListener('DOMContentLoaded', () => {
     email:     "chrispermwash@gmail.com",
     github:    "github.com/kris4509",
     education: "Bachelor of Science in Computer Science at Egerton University, Kenya (2023 – 2027)",
-    skills:    "Python, HTML, CSS, JavaScript, Flask, SQL, Git and GitHub, Microsoft Office, and Google Workspace",
+    skills:    "Python, Flask, Java, HTML5, CSS3, Tailwind CSS, Bootstrap 5, JavaScript, MySQL, SQLAlchemy, SQL, Git and GitHub, Vercel, GitHub Pages, Linux and Terminal, REST APIs, and M-Pesa Daraja API",
     available: "open to freelance work, internships, remote gigs, AI training, data annotation, and entry-level tech roles",
     strengths: "quick learner, detail-oriented, self-motivated, good communicator, and a strong team collaborator",
+    projects: [
+      "Portfolio Website — a responsive personal portfolio with dark/light mode, AI chat widget, download CV button, certifications section, and a Formspree contact form, deployed on Vercel.",
+      "UniFlow Exam Card System — a university web application where students digitally submit exam cards to their class rep for bulk printing and dean stamping, built with Python Flask, MySQL, Bootstrap 5, and M-Pesa Daraja API for payments.",
+      "Bead Artwork Ecommerce Website — a frontend ecommerce site showcasing Kenyan handcrafted beadwork with a product catalog, WhatsApp ordering, and a lightbox gallery.",
+      "Lecture Management and Scheduling System — a university scheduling system concept with venue management and timetable clash detection using Python and database design.",
+      "Student Funds Management System — a concept for tracking student pocket money and financial records tailored to Kenyan schools.",
+    ],
+    certifications: "Certified JavaScript Developer, Certified Python Developer, Certified React Developer, Certified Cybersecurity Professional, and Certified Java Developer — all from W3Schools at Professional level in 2024.",
+    tools: "Git and GitHub for version control, Vercel for hosting and CI/CD, GitHub Pages for static hosting, Linux terminal for command line work, REST API design and integration, and M-Pesa Daraja API for mobile payments.",
   };
 
   function builtInReply(message) {
@@ -245,8 +254,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (has(["skill","tech","stack","tools","proficient","expertise","technologies","know","python","javascript","flask","html","css","sql","git"]))
       return `Chris is proficient in ${info.skills}. He enjoys building full-stack web projects and is always picking up new tools quickly.`;
 
-    if (has(["project","built","made","ecommerce","lecture","fund","portfolio","work","website","app","application","bead","scheduling"]))
-      return `Chris has built several projects including a responsive Portfolio Website deployed on Vercel, a Bead Artwork Ecommerce site for Kenyan handcrafted beadwork, a Lecture Management and Scheduling System, and a Student Funds Management System concept.`;
+    if (has(["project","built","made","ecommerce","lecture","fund","portfolio","work","website","app","application","bead","scheduling","uniflow","exam","card","mpesa","m-pesa","payment"]))
+      return `Chris has built ${info.projects.length} projects. ${info.projects[0]} He also built ${info.projects[1]} Additionally he made ${info.projects[2]}. Ask me about a specific project for more details!`;
+
+    if (has(["uniflow","exam card","class rep","printing","stamp","dean","university app","student portal"]))
+      return `UniFlow is one of Chris's most impressive projects. ${info.projects[1]} It solves a real university problem by going fully digital — no more physical trips to the class rep!`;
+
+    if (has(["certif","w3school","javascript cert","python cert","react cert","java cert","cybersecurity cert","certified"]))
+      return `Chris holds 5 W3Schools Professional certifications: ${info.certifications} You can view and verify each certificate in the Certifications section of his portfolio.`;
+
+    if (has(["tool","platform","vercel","github page","linux","terminal","rest api","mpesa","daraja","hosting","deploy","ci/cd","kernel","shell"]))
+      return `Beyond coding languages, Chris is experienced with developer tools including ${info.tools}`;
+
+    if (has(["database","mysql","sql","sqlalchemy","orm","query","table","schema"]))
+      return `Chris works with MySQL for relational database design and SQLAlchemy ORM for database abstraction in Python projects. He is comfortable writing SQL queries, designing schemas, and managing data relationships.`;
+
+    if (has(["bootstrap","tailwind","framework","css framework","responsive","ui","design"]))
+      return `Chris is proficient in both Bootstrap 5 and Tailwind CSS for building responsive, modern user interfaces. He has used Bootstrap in full-stack Flask apps and Tailwind in his portfolio and personal projects.`;
 
     if (has(["education","university","degree","study","egerton","school","college","student","course","major","bsc","curriculum"]))
       return `Chris is studying for a ${info.education}. His coursework covers Programming, Software Engineering, Database Systems, Data Structures, Algorithms, and Web Development.`;
