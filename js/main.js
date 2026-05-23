@@ -236,49 +236,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const msg = message.toLowerCase().trim();
     const has = (keywords) => keywords.some(k => msg.includes(k));
 
-    if (has(["hi","hello","hey","good morning","good afternoon","howdy","greetings"]))
-      return `Hi there! I am Chris's assistant. You can ask me about his skills, projects, education, or how to get in touch. What would you like to know?`;
+    if (has(["hi","hello","hey","good morning","good afternoon","howdy","greetings","what's up","wassup","hiya"]))
+      return `Hi there! I am Chris's assistant. You can ask me about his skills, projects, education, availability, or how to get in touch. What would you like to know?`;
 
-    if (has(["who is","about chris","tell me","introduce","background","yourself"]))
+    if (has(["who is","about chris","tell me","introduce","background","yourself","describe","summary","overview","professional"]))
       return `Chris is a Computer Science student and web developer based in Nairobi, Kenya. He is studying for a ${info.education} and is ${info.available}.`;
 
-    if (has(["skill","tech","stack","tools","proficient","expertise","technologies","know","language"]))
+    if (has(["skill","tech","stack","tools","proficient","expertise","technologies","know","python","javascript","flask","html","css","sql","git"]))
       return `Chris is proficient in ${info.skills}. He enjoys building full-stack web projects and is always picking up new tools quickly.`;
 
-    if (has(["project","built","made","ecommerce","lecture","fund","portfolio","work"]))
+    if (has(["project","built","made","ecommerce","lecture","fund","portfolio","work","website","app","application","bead","scheduling"]))
       return `Chris has built several projects including a responsive Portfolio Website deployed on Vercel, a Bead Artwork Ecommerce site for Kenyan handcrafted beadwork, a Lecture Management and Scheduling System, and a Student Funds Management System concept.`;
 
-    if (has(["education","university","degree","study","egerton","school","college","student"]))
+    if (has(["education","university","degree","study","egerton","school","college","student","course","major","bsc","curriculum"]))
       return `Chris is studying for a ${info.education}. His coursework covers Programming, Software Engineering, Database Systems, Data Structures, Algorithms, and Web Development.`;
 
-    if (has(["contact","reach","email","hire","get in touch","message","connect"]))
-      return `You can reach Chris at ${info.email} or use the Contact section on this page to send him a message directly.`;
+    if (has(["contact","reach","email","get in touch","message","connect","talk","communicate","find","chrispermwash"]))
+      return `You can reach Chris directly at ${info.email} or use the Contact section on this page to send him a message.`;
 
-    if (has(["available","freelance","internship","remote","job","opportunity","open to"]))
-      return `Yes! Chris is currently ${info.available}. Reach out at ${info.email} if you have a matching opportunity.`;
+    if (has(["availab","hire","hiring","freelance","internship","remote","job","opportunity","open to","work with","looking for","recruit","gig"]))
+      return `Yes! Chris is currently ${info.available}. If you have a matching opportunity, reach out at ${info.email} or use the contact form on this page.`;
 
-    if (has(["github","code","repository","repo"]))
-      return `Check out Chris's code on GitHub at ${info.github}. He has several projects there including his portfolio and ecommerce website.`;
+    if (has(["github","code","repository","repo","source","open source","git hub"]))
+      return `You can check out Chris's code on GitHub at ${info.github}. He has several projects there including his portfolio and ecommerce website.`;
 
-    if (has(["location","where","country","kenya","nairobi","based"]))
+    if (has(["location","where","country","kenya","nairobi","based","live","from","city"]))
       return `Chris is based in Nairobi, Kenya and is fully comfortable with remote work and online collaboration.`;
 
-    if (has(["strength","soft skill","personality","trait","quality"]))
-      return `Chris's key strengths are that he is a ${info.strengths}. He adapts quickly to new tools and environments.`;
+    if (has(["strength","soft skill","personality","trait","quality","attitude","character"]))
+      return `Chris's key strengths include being a ${info.strengths}. He adapts quickly to new tools and environments.`;
 
-    if (has(["experience","work history","career","professional"]))
-      return `Chris has been building web projects since 2022 as a freelance developer, using modern workflows like Git, GitHub, and Vercel deployments.`;
+    if (has(["experience","work history","career","professional","worked","past","history"]))
+      return `Chris has been building web projects since 2022 as a freelance developer. He uses modern workflows including Git, GitHub, and Vercel deployments and is actively growing his professional experience.`;
 
-    if (has(["speak","english","swahili"]))
-      return `Chris is fluent in both English and Swahili.`;
+    if (has(["speak","english","swahili","language","tongue","fluent","bilingual"]))
+      return `Chris is fluent in both English and Swahili, which helps him communicate effectively across different audiences.`;
 
-    if (has(["thank","thanks","appreciate","great","awesome","nice","cool"]))
+    if (has(["name","full name","surname","called","chrisper","mwangi","wambui"]))
+      return `His full name is Chrisper Mwangi Wambui, but he goes by Chris. He is a Computer Science student and web developer based in Nairobi, Kenya.`;
+
+    if (has(["ai","artificial intelligence","machine learning","chat","bot","assistant","gpt","gemini"]))
+      return `Chris has a strong interest in AI systems and technologies. This very chat assistant on his portfolio is one example of his AI integration work!`;
+
+    if (has(["thank","thanks","appreciate","great","awesome","nice","cool","excellent","perfect","wonderful"]))
       return `You are welcome! Feel free to ask me anything else about Chris.`;
 
-    if (has(["bye","goodbye","see you","later"]))
-      return `Goodbye! Come back anytime if you have more questions. Have a great day!`;
+    if (has(["bye","goodbye","see you","later","cya","take care","farewell"]))
+      return `Goodbye! Come back anytime if you have more questions about Chris. Have a great day!`;
 
-    return `I am only trained on Chris's professional background. Ask me about his skills, projects, education, or availability. For anything else, contact him at ${info.email}.`;
+    return `Great question! I am trained on Chris's professional background. Try asking about his skills, projects, education, availability, contact details, GitHub, or location. For anything else, reach him at ${info.email}.`;
   }
 
   // ===== Chat Widget Logic =====
@@ -385,4 +391,28 @@ document.addEventListener('DOMContentLoaded', () => {
     chatSubmit.disabled = false;
   });
 
+});
+
+
+// ===== Certificate Lightbox =====
+function openCert(imgSrc, title) {
+  const modal = document.getElementById('cert-modal');
+  document.getElementById('cert-modal-img').src = imgSrc;
+  document.getElementById('cert-modal-title').textContent = title;
+  modal.classList.remove('opacity-0', 'pointer-events-none');
+  modal.classList.add('opacity-100', 'pointer-events-auto');
+  document.body.style.overflow = 'hidden';
+  lucide.createIcons();
+}
+
+function closeCert() {
+  const modal = document.getElementById('cert-modal');
+  modal.classList.add('opacity-0', 'pointer-events-none');
+  modal.classList.remove('opacity-100', 'pointer-events-auto');
+  document.body.style.overflow = '';
+}
+
+// Close with Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeCert();
 });
