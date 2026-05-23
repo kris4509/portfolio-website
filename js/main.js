@@ -440,3 +440,61 @@ function closeCert() {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeCert();
 });
+
+// ===== Services Horizontal Scroll =====
+const track = document.getElementById('services-track');
+const dots  = document.querySelectorAll('.service-dot');
+const cards = document.querySelectorAll('.service-card');
+
+if (track && dots.length) {
+  // Hide scrollbar visually
+  track.style.msOverflowStyle  = 'none';
+  track.style.scrollbarWidth   = 'none';
+
+  const updateActive = () => {
+    const scrollLeft  = track.scrollLeft;
+    const cardWidth   = cards[0]?.offsetWidth + 24 || 300; // card + gap
+    const activeIndex = Math.round(scrollLeft / cardWidth);
+
+    // Update dots
+    dots.forEach((dot, i) => {
+      if (i === activeIndex) {
+        dot.style.width          = '24px';
+        dot.style.backgroundColor = 'rgb(139,92,246)';
+      } else {
+        dot.style.width          = '6px';
+        dot.style.backgroundColor = '';
+      }
+    });
+
+    // Scale active card
+    cards.forEach((card, i) => {
+      if (i === activeIndex) {
+        card.style.transform = 'translateY(-8px) scale(1.03)';
+        card.style.borderColor = '';
+        card.style.boxShadow = '0 20px 60px rgba(139,92,246,0.25)';
+      } else {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+      }
+    });
+  };
+
+  track.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+
+  // Arrow key support when hovering
+  track.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') track.scrollBy({ left: 300, behavior: 'smooth' });
+    if (e.key === 'ArrowLeft')  track.scrollBy({ left: -300, behavior: 'smooth' });
+  });
+
+  // Click dot to scroll to card
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      const cardWidth = cards[0]?.offsetWidth + 24 || 300;
+      track.scrollTo({ left: i * cardWidth, behavior: 'smooth' });
+    });
+    dot.style.cursor = 'pointer';
+  });
+}
