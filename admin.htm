@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Admin — Chris</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0f1117;--sidebar:#161b27;--card:#1e2535;--border:#2a3348;
+  --text:#e2e8f0;--muted:#64748b;--accent:#7c3aed;--accent2:#06b6d4;
+  --green:#22c55e;--red:#ef4444;--yellow:#eab308;--input:#252d3d;
+}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;width:360px;}
+.login-box h1{font-size:22px;margin-bottom:6px;}
+.login-box p{color:var(--muted);font-size:13px;margin-bottom:28px;}
+.login-logo{width:48px;height:48px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;}
+.layout{display:flex;min-height:100vh;}
+.sidebar{width:220px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.sidebar-logo .dot{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.sidebar-logo span{font-weight:700;font-size:15px;}
+.sidebar nav{flex:1;padding:12px 8px;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--muted);transition:.2s;margin-bottom:2px;}
+.nav-item:hover{background:var(--card);color:var(--text);}
+.nav-item.active{background:rgba(124,58,237,.15);color:var(--accent);}
+.nav-item i{width:18px;text-align:center;}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border);}
+.main{flex:1;margin-left:220px;overflow-y:auto;}
+.topbar{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--sidebar);position:sticky;top:0;z-index:10;}
+.topbar h2{font-size:18px;font-weight:600;}
+.content{padding:28px;}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.stat-card .label{font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+.stat-card .value{font-size:28px;font-weight:700;}
+.stat-card .sub{font-size:12px;color:var(--muted);margin-top:4px;}
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.table-header h3{font-size:15px;font-weight:600;}
+table{width:100%;border-collapse:collapse;}
+th{padding:12px 16px;text-align:left;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);}
+td{padding:12px 16px;font-size:14px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.form-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;}
+.form-modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;}
+.form-modal h3{font-size:17px;font-weight:600;margin-bottom:20px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
+.field input,.field textarea,.field select{width:100%;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;outline:none;transition:.2s;font-family:inherit;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);}
+.field textarea{min-height:90px;resize:vertical;}
+.btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:.2s;display:inline-flex;align-items:center;gap:6px;font-family:inherit;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{opacity:.85;}
+.btn-secondary{background:var(--input);color:var(--text);border:1px solid var(--border);}
+.btn-secondary:hover{border-color:var(--accent);}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+.btn-danger:hover{background:rgba(239,68,68,.25);}
+.btn-success{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-purple{background:rgba(124,58,237,.15);color:#a78bfa;}
+.badge-green{background:rgba(34,197,94,.15);color:var(--green);}
+.badge-yellow{background:rgba(234,179,8,.15);color:var(--yellow);}
+.badge-red{background:rgba(239,68,68,.15);color:var(--red);}
+.badge-cyan{background:rgba(6,182,212,.15);color:var(--accent2);}
+.msg-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px;}
+.msg-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.msg-name{font-weight:600;font-size:15px;}
+.msg-email{font-size:12px;color:var(--muted);}
+.msg-subject{font-size:13px;color:var(--accent2);margin-bottom:6px;}
+.msg-body{font-size:14px;color:var(--muted);line-height:1.6;}
+.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:8px;min-height:42px;cursor:text;}
+.tag{background:rgba(124,58,237,.2);color:#a78bfa;padding:3px 10px;border-radius:12px;font-size:12px;display:flex;align-items:center;gap:4px;}
+.tag-x{cursor:pointer;opacity:.6;margin-left:2px;}
+.tag-x:hover{opacity:1;}
+.tags-wrap input{background:none;border:none;outline:none;color:var(--text);font-size:13px;min-width:80px;flex:1;}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty i{font-size:40px;margin-bottom:12px;display:block;opacity:.3;}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.row-actions{display:flex;gap:6px;}
+.search-bar{background:var(--input);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:14px;outline:none;width:200px;}
+.search-bar:focus{border-color:var(--accent);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const store = {
+  get:(k,d)=>{try{const v=localStorage.getItem('adm_'+k);return v?JSON.parse(v):d;}catch{return d;}},
+  set:(k,v)=>localStorage.setItem('adm_'+k,JSON.stringify(v)),
+};
+
+const DEF_PROJECTS=[
+  {id:1,title:'Portfolio Website',desc:'Responsive personal portfolio with dark/light mode, AI chat widget, download CV button, certifications section and Formspree contact form.',tech:['HTML','CSS','JavaScript','Tailwind'],link:'https://kris-portfolio-website.vercel.app',github:'https://github.com/kris4509/portfolio-website',status:'Live',image:''},
+  {id:2,title:'UniFlow Exam Card System',desc:'University web app where students digitally submit exam cards to class rep for bulk printing and dean stamping.',tech:['Python','Flask','MySQL','Bootstrap 5','M-Pesa API','SQLAlchemy'],link:'',github:'https://github.com/kris4509/uniflow',status:'In Progress',image:''},
+  {id:3,title:'Bead Artwork Ecommerce',desc:'Frontend ecommerce site showcasing Kenyan handcrafted beadwork with product catalog and WhatsApp ordering.',tech:['HTML','CSS','JavaScript'],link:'https://kris4509.github.io/bead-artwork-ecommerce-website/',github:'',status:'Live',image:''},
+  {id:4,title:'Lecture Management System',desc:'University scheduling system concept with venue management and timetable clash detection.',tech:['Python','Database Design','UML'],link:'',github:'',status:'Completed',image:''},
+];
+const DEF_SKILLS=[
+  {id:1,name:'HTML5',category:'Languages',level:95},
+  {id:2,name:'CSS3 & Tailwind',category:'Languages',level:90},
+  {id:3,name:'JavaScript',category:'Languages',level:85},
+  {id:4,name:'Python & Flask',category:'Languages',level:80},
+  {id:5,name:'Java',category:'Languages',level:75},
+  {id:6,name:'Bootstrap 5',category:'Languages',level:85},
+  {id:7,name:'MySQL',category:'Databases',level:78},
+  {id:8,name:'SQLAlchemy ORM',category:'Databases',level:72},
+  {id:9,name:'SQL',category:'Databases',level:80},
+  {id:10,name:'Git & GitHub',category:'Tools',level:88},
+  {id:11,name:'Vercel',category:'Tools',level:85},
+  {id:12,name:'GitHub Pages',category:'Tools',level:90},
+  {id:13,name:'Linux & Terminal',category:'Tools',level:70},
+  {id:14,name:'REST APIs',category:'Tools',level:78},
+  {id:15,name:'M-Pesa Daraja API',category:'Tools',level:72},
+];
+const DEF_PROFILE={name:'Chrisper Mwangi Wambui',role:'CS Student & Web Developer',email:'chrispermwash@gmail.com',phone:'0707546201',location:'Nairobi, Kenya',university:'Egerton University',github:'github.com/kris4509',portfolio:'kris-portfolio-website.vercel.app',bio:'Computer Science student at Egerton University with a passion for building modern web applications. Experienced in Python, Flask, JavaScript and database-driven projects. Open to freelance, internships and remote work.',available:true};
+const DEF_MESSAGES=[
+  {id:1,name:'Peter Ndindi',email:'peterndindi41@gmail.com',subject:'Greeting',message:'Hello, I came across your portfolio and wanted to reach out.',date:'2024-05-21',read:false},
+  {id:2,name:'Peter',email:'peter@gmail.com',subject:'Job vacancy',message:'Your application went through. We would like to discuss an opportunity with you.',date:'2024-05-21',read:false},
+];
+
+// Tag Input
+function TagInput({tags,onChange}){
+  const [inp,setInp]=useState('');
+  const add=e=>{if((e.key==='Enter'||e.key===',')&&inp.trim()){e.preventDefault();if(!tags.includes(inp.trim()))onChange([...tags,inp.trim()]);setInp('');}};
+  const rm=t=>onChange(tags.filter(x=>x!==t));
+  return(
+    <div className="tags-wrap" onClick={()=>document.getElementById('taginput')&&document.getElementById('taginput').focus()}>
+      {tags.map(t=><div key={t} className="tag">{t}<span className="tag-x" onClick={e=>{e.stopPropagation();rm(t);}}>×</span></div>)}
+      <input id="taginput" value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={add} placeholder={tags.length?'Add more...':'Add tag + Enter'}/>
+    </div>
+  );
+}
+
+// Login
+function Login({onLogin}){
+  const [pw,setPw]=useState('');const [err,setErr]=useState('');
+  const go=e=>{e.preventDefault();if(pw==='chris2024'){onLogin();}else setErr('Incorrect password.');};
+  return(
+    <div className="login-wrap">
+      <div className="login-box">
+        <div className="login-logo">⚡</div>
+        <h1>Portfolio Admin</h1>
+        <p>Sign in to manage your portfolio content and track interactions.</p>
+        <form onSubmit={go}>
+          <div className="field"><label>Password</label><input type="password" value={pw} onChange={e=>setPw(e.target.value)} placeholder="Enter admin password" autoFocus/></div>
+          {err&&<p style={{color:'var(--red)',fontSize:13,marginBottom:12}}><i className="fas fa-exclamation-circle"></i> {err}</p>}
+          <button className="btn btn-primary" style={{width:'100%',justifyContent:'center'}} type="submit"><i className="fas fa-sign-in-alt"></i> Sign In</button>
+        </form>
+        <p style={{fontSize:12,color:'var(--muted)',marginTop:16,textAlign:'center'}}>Default: <code style={{background:'var(--input)',padding:'2px 8px',borderRadius:4}}>chris2024</code></p>
+      </div>
+    </div>
+  );
+}
+
+// Overview
+function Overview({projects,skills,messages}){
+  const unread=messages.filter(m=>!m.read).length;
+  const live=projects.filter(p=>p.status==='Live').length;
+  return(
+    <div>
+      <div className="stat-grid">
+        <div className="stat-card"><div className="label">Projects</div><div className="value" style={{color:'var(--accent)'}}>{projects.length}</div><div className="sub">{live} live</div></div>
+        <div className="stat-card"><div className="label">Skills</div><div className="value" style={{color:'var(--accent2)'}}>{skills.length}</div><div className="sub">across 3 categories</div></div>
+        <div className="stat-card"><div className="label">Messages</div><div className="value" style={{color:'var(--yellow)'}}>{messages.length}</div><div className="sub">{unread} unread</div></div>
+        <div className="stat-card"><div className="label">Certifications</div><div className="value" style={{color:'var(--green)'}}>5</div><div className="sub">W3Schools Professional</div></div>
+      </div>
+      <div className="table-wrap">
+        <div className="table-header"><h3>Projects Summary</h3></div>
+        <table>
+          <thead><tr><th>Title</th><th>Stack</th><th>Status</th></tr></thead>
+          <tbody>{projects.map(p=>(
+            <tr key={p.id}>
+              <td><div style={{fontWeight:600}}>{p.title}</div><div style={{fontSize:12,color:'var(--muted)'}}>{p.desc.slice(0,65)}...</div></td>
+              <td>{p.tech.slice(0,2).map(t=><span key={t} className="badge badge-purple" style={{marginRight:4}}>{t}</span>)}{p.tech.length>2&&<span style={{fontSize:11,color:'var(--muted)'}}>+{p.tech.length-2}</span>}</td>
+              <td><span className={`badge ${p.status==='Live'?'badge-green':p.status==='In Progress'?'badge-yellow':p.status==='Completed'?'badge-cyan':'badge-red'}`}>{p.status}</span></td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// Projects
+function ProjectsManager({projects,setProjects}){
+  const [show,setShow]=useState(false);const [editing,setEditing]=useState(null);const [search,setSearch]=useState('');
+  const blank={title:'',desc:'',tech:[],link:'',github:'',status:'In Progress',image:''};
+  const [form,setForm]=useState(blank);
+  const openAdd=()=>{setForm(blank);setEditing(null);setShow(true);};
+  const openEdit=p=>{setForm({...p});setEditing(p.id);setShow(true);};
+  const save=()=>{
+    if(!form.title.trim())return alert('Title required');
+    if(editing)setProjects(projects.map(p=>p.id===editing?{...form,id:editing}:p));
+    else setProjects([...projects,{...form,id:Date.now()}]);
+    setShow(false);
+  };
+  const del=id=>{if(window.confirm('Delete this project?'))setProjects(projects.filter(p=>p.id!==id));};
+  const filtered=projects.filter(p=>p.title.toLowerCase().includes(search.toLowerCase())||p.desc.toLowerCase().includes(search.toLowerCase()));
+  return(
+    <div>
+      <div className="table-wrap">
+        <div className="table-header">
+          <h3>All Projects <span style={{color:'var(--muted)',fontWeight:400}}>({projects.length})</span></h3>
+          <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+            <input className="search-bar" placeholder="Search projects..." value={search} onChange={e=>setSearch(e.target.value)}/>
+            <button className="btn btn-primary" onClick={openAdd}><i className="fas fa-plus"></i> Add Project</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Project</th><th>Tech Stack</th><th>Status</th><th>Links</th><th>Actions</th></tr></thead>
+          <tbody>
+            {filtered.length===0&&<tr><td colSpan={5}><div className="empty"><i className="fas fa-folder-open"></i><div>No projects found</div></div></td></tr>}
+            {filtered.map(p=>(
+              <tr key={p.id}>
+                <td><div style={{fontWeight:600,fontSize:14}}>{p.title}</div><div style={{fontSize:12,color:'var(--muted)',marginTop:2,maxWidth:260}}>{p.desc.slice(0,80)}{p.desc.length>80?'...':''}</div></td>
+                <td style={{maxWidth:160}}>{p.tech.slice(0,3).map(t=><span key={t} className="badge badge-purple" style={{marginRight:3,marginBottom:3,display:'inline-block'}}>{t}</span>)}{p.tech.length>3&&<span style={{fontSize:11,color:'var(--muted)'}}>+{p.tech.length-3}</span>}</td>
+                <td><span className={`badge ${p.status==='Live'?'badge-green':p.status==='In Progress'?'badge-yellow':p.status==='Completed'?'badge-cyan':'badge-red'}`}>{p.status}</span></td>
+                <td style={{whiteSpace:'nowrap'}}>
+                  {p.link&&<a href={p.link} target="_blank" style={{color:'var(--accent2)',fontSize:12,marginRight:10,textDecoration:'none'}}><i className="fas fa-external-link-alt"></i> Live</a>}
+                  {p.github&&<a href={p.github} target="_blank" style={{color:'var(--muted)',fontSize:12,textDecoration:'none'}}><i className="fab fa-github"></i> Repo</a>}
+                </td>
+                <td><div className="row-actions">
+                  <button className="btn btn-secondary btn-sm" onClick={()=>openEdit(p)}><i className="fas fa-edit"></i></button>
+                  <button className="btn btn-danger btn-sm" onClick={()=>del(p.id)}><i className="fas fa-trash"></i></button>
+                </div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {show&&(
+        <div className="form-modal-bg" onClick={e=>{if(e.target===e.currentTarget)setShow(false);}}>
+          <div className="form-modal">
+            <h3><i className="fas fa-folder" style={{marginRight:8,color:'var(--accent)'}}></i>{editing?'Edit Project':'Add New Project'}</h3>
+            <div className="field"><label>Project Title *</label><input value={form.title} onChange={e=>setForm({...form,title:e.target.value})} placeholder="e.g. UniFlow Exam System"/></div>
+            <div className="field"><label>Description</label><textarea value={form.desc} onChange={e=>setForm({...form,desc:e.target.value})} placeholder="Describe what this project does..."/></div>
+            <div className="field"><label>Tech Stack <span style={{color:'var(--muted)'}}>(press Enter to add each)</span></label><TagInput tags={form.tech} onChange={tech=>setForm({...form,tech})}/></div>
+            <div className="field"><label>Status</label>
+              <select value={form.status} onChange={e=>setForm({...form,status:e.target.value})}>
+                <option>In Progress</option><option>Live</option><option>Completed</option><option>On Hold</option>
+              </select>
+            </div>
+            <div className="two-col">
+              <div className="field"><label>Live URL</label><input value={form.link} onChange={e=>setForm({...form,link:e.target.value})} placeholder="https://..."/></div>
+              <div className="field"><label>GitHub URL</label><input value={form.github} onChange={e=>setForm({...form,github:e.target.value})} placeholder="https://github.com/..."/></div>
+            </div>
+            <div className="field"><label>Preview Image Path / URL</label><input value={form.image} onChange={e=>setForm({...form,image:e.target.value})} placeholder="assets/images/project-xx.png"/></div>
+            <div style={{display:'flex',gap:10,justifyContent:'flex-end',marginTop:4}}>
+              <button className="btn btn-secondary" onClick={()=>setShow(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={save}><i className="fas fa-save"></i> {editing?'Update':'Save'} Project</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Skills
+function SkillsManager({skills,setSkills}){
+  const [show,setShow]=useState(false);const [editing,setEditing]=useState(null);const [filter,setFilter]=useState('All');
+  const blank={name:'',category:'Languages',level:80};
+  const [form,setForm]=useState(blank);
+  const cats=['All','Languages','Databases','Tools'];
+  const filtered=skills.filter(s=>filter==='All'||s.category===filter);
+  const openAdd=()=>{setForm(blank);setEditing(null);setShow(true);};
+  const openEdit=s=>{setForm({...s});setEditing(s.id);setShow(true);};
+  const save=()=>{
+    if(!form.name.trim())return alert('Skill name required');
+    if(editing)setSkills(skills.map(s=>s.id===editing?{...form,id:editing}:s));
+    else setSkills([...skills,{...form,id:Date.now()}]);
+    setShow(false);
+  };
+  const del=id=>{if(window.confirm('Remove this skill?'))setSkills(skills.filter(s=>s.id!==id));};
+  const cc={Languages:'badge-purple',Databases:'badge-cyan',Tools:'badge-green'};
+  return(
+    <div>
+      <div className="table-wrap">
+        <div className="table-header">
+          <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
+            <h3>Skills</h3>
+            {cats.map(c=><button key={c} className={`btn btn-sm ${filter===c?'btn-primary':'btn-secondary'}`} onClick={()=>setFilter(c)}>{c}</button>)}
+          </div>
+          <button className="btn btn-primary" onClick={openAdd}><i className="fas fa-plus"></i> Add Skill</button>
+        </div>
+        <table>
+          <thead><tr><th>Skill</th><th>Category</th><th>Proficiency</th><th>Actions</th></tr></thead>
+          <tbody>
+            {filtered.length===0&&<tr><td colSpan={4}><div className="empty"><i className="fas fa-code"></i><div>No skills in this category</div></div></td></tr>}
+            {filtered.map(s=>(
+              <tr key={s.id}>
+                <td style={{fontWeight:600}}>{s.name}</td>
+                <td><span className={`badge ${cc[s.category]||'badge-purple'}`}>{s.category}</span></td>
+                <td style={{minWidth:200}}>
+                  <div style={{display:'flex',alignItems:'center',gap:10}}>
+                    <div style={{flex:1,height:6,background:'var(--border)',borderRadius:3}}>
+                      <div style={{width:s.level+'%',height:'100%',background:'linear-gradient(90deg,var(--accent),var(--accent2))',borderRadius:3}}></div>
+                    </div>
+                    <span style={{fontSize:13,color:'var(--muted)',minWidth:32,textAlign:'right'}}>{s.level}%</span>
+                  </div>
+                </td>
+                <td><div className="row-actions">
+                  <button className="btn btn-secondary btn-sm" onClick={()=>openEdit(s)}><i className="fas fa-edit"></i></button>
+                  <button className="btn btn-danger btn-sm" onClick={()=>del(s.id)}><i className="fas fa-trash"></i></button>
+                </div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {show&&(
+        <div className="form-modal-bg" onClick={e=>{if(e.target===e.currentTarget)setShow(false);}}>
+          <div className="form-modal">
+            <h3><i className="fas fa-code" style={{marginRight:8,color:'var(--accent2)'}}></i>{editing?'Edit Skill':'Add Skill'}</h3>
+            <div className="field"><label>Skill Name *</label><input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="e.g. React, Docker..."/></div>
+            <div className="field"><label>Category</label>
+              <select value={form.category} onChange={e=>setForm({...form,category:e.target.value})}>
+                <option>Languages</option><option>Databases</option><option>Tools</option>
+              </select>
+            </div>
+            <div className="field">
+              <label>Proficiency Level: <strong style={{color:'var(--accent)'}}>{form.level}%</strong></label>
+              <input type="range" min="10" max="100" step="5" value={form.level} onChange={e=>setForm({...form,level:+e.target.value})} style={{width:'100%',marginTop:8}}/>
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:'var(--muted)',marginTop:4}}><span>Beginner</span><span>Intermediate</span><span>Expert</span></div>
+            </div>
+            <div style={{display:'flex',gap:10,justifyContent:'flex-end'}}>
+              <button className="btn btn-secondary" onClick={()=>setShow(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={save}><i className="fas fa-save"></i> {editing?'Update':'Save'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Messages
+function MessagesViewer({messages,setMessages}){
+  const markRead=id=>setMessages(messages.map(m=>m.id===id?{...m,read:true}:m));
+  const del=id=>{if(window.confirm('Delete this message?'))setMessages(messages.filter(m=>m.id!==id));};
+  const markAll=()=>setMessages(messages.map(m=>({...m,read:true})));
+  const unread=messages.filter(m=>!m.read).length;
+  return(
+    <div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+        <span style={{color:'var(--muted)',fontSize:14}}>{messages.length} total · <span style={{color:'var(--yellow)'}}>{unread} unread</span></span>
+        {unread>0&&<button className="btn btn-secondary btn-sm" onClick={markAll}><i className="fas fa-check-double"></i> Mark all read</button>}
+      </div>
+      {messages.length===0&&<div className="empty"><i className="fas fa-inbox"></i><div>No messages yet. Messages from your contact form will appear here.</div></div>}
+      {messages.map(m=>(
+        <div key={m.id} className="msg-card" style={{borderLeft:`3px solid ${m.read?'var(--border)':'var(--accent)'}`}}>
+          <div className="msg-header">
+            <div>
+              <div className="msg-name">{m.name} {!m.read&&<span className="badge badge-purple" style={{fontSize:10,marginLeft:6}}>NEW</span>}</div>
+              <div className="msg-email"><i className="fas fa-envelope" style={{marginRight:4}}></i>{m.email} · {m.date}</div>
+            </div>
+            <div className="row-actions">
+              {!m.read&&<button className="btn btn-success btn-sm" onClick={()=>markRead(m.id)}><i className="fas fa-check"></i></button>}
+              <a href={`mailto:${m.email}?subject=Re: ${m.subject}`} className="btn btn-secondary btn-sm"><i className="fas fa-reply"></i></a>
+              <button className="btn btn-danger btn-sm" onClick={()=>del(m.id)}><i className="fas fa-trash"></i></button>
+            </div>
+          </div>
+          <div className="msg-subject"><i className="fas fa-tag" style={{marginRight:5}}></i>{m.subject}</div>
+          <div className="msg-body">{m.message}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Profile
+function ProfileEditor({profile,setProfile}){
+  const [form,setForm]=useState({...profile});const [saved,setSaved]=useState(false);
+  const save=()=>{setProfile(form);setSaved(true);setTimeout(()=>setSaved(false),3000);};
+  return(
+    <div>
+      <div className="table-wrap" style={{padding:24}}>
+        <h3 style={{marginBottom:20}}><i className="fas fa-user" style={{marginRight:8,color:'var(--accent)'}}></i>Personal Information</h3>
+        <div className="profile-grid">
+          <div className="field"><label>Full Name</label><input value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></div>
+          <div className="field"><label>Role / Title</label><input value={form.role} onChange={e=>setForm({...form,role:e.target.value})}/></div>
+          <div className="field"><label>Email Address</label><input value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></div>
+          <div className="field"><label>Phone</label><input value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})}/></div>
+          <div className="field"><label>Location</label><input value={form.location} onChange={e=>setForm({...form,location:e.target.value})}/></div>
+          <div className="field"><label>University</label><input value={form.university} onChange={e=>setForm({...form,university:e.target.value})}/></div>
+          <div className="field"><label>GitHub URL</label><input value={form.github} onChange={e=>setForm({...form,github:e.target.value})}/></div>
+          <div className="field"><label>Portfolio URL</label><input value={form.portfolio} onChange={e=>setForm({...form,portfolio:e.target.value})}/></div>
+        </div>
+        <div className="field"><label>Bio / Summary</label><textarea value={form.bio} onChange={e=>setForm({...form,bio:e.target.value})} style={{minHeight:110}}/></div>
+        <div style={{display:'flex',alignItems:'center',gap:16,margin:'8px 0 20px'}}>
+          <label style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer',fontSize:14}}>
+            <input type="checkbox" checked={form.available} onChange={e=>setForm({...form,available:e.target.checked})} style={{width:16,height:16}}/>
+            Available for hire / internships
+          </label>
+          <span className={`badge ${form.available?'badge-green':'badge-red'}`}>{form.available?'Open to Work':'Not Available'}</span>
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          <button className="btn btn-primary" onClick={save}><i className="fas fa-save"></i> Save Changes</button>
+          {saved&&<span style={{color:'var(--green)',fontSize:13,display:'flex',alignItems:'center',gap:6}}><i className="fas fa-check-circle"></i> Changes saved successfully!</span>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// App Root
+function App(){
+  const [authed,setAuthed]=useState(()=>sessionStorage.getItem('adm_auth')==='1');
+  const [page,setPage]=useState('overview');
+  const [projects,setProjectsRaw]=useState(()=>store.get('projects',DEF_PROJECTS));
+  const [skills,setSkillsRaw]=useState(()=>store.get('skills',DEF_SKILLS));
+  const [messages,setMessagesRaw]=useState(()=>store.get('messages',DEF_MESSAGES));
+  const [profile,setProfileRaw]=useState(()=>store.get('profile',DEF_PROFILE));
+
+  const setProjects=v=>{store.set('projects',v);setProjectsRaw(v);};
+  const setSkills=v=>{store.set('skills',v);setSkillsRaw(v);};
+  const setMessages=v=>{store.set('messages',v);setMessagesRaw(v);};
+  const setProfile=v=>{store.set('profile',v);setProfileRaw(v);};
+
+  const login=()=>{sessionStorage.setItem('adm_auth','1');setAuthed(true);};
+  const logout=()=>{sessionStorage.removeItem('adm_auth');setAuthed(false);};
+
+  if(!authed)return <Login onLogin={login}/>;
+
+  const unread=messages.filter(m=>!m.read).length;
+  const navItems=[
+    {id:'overview',icon:'fa-gauge',label:'Overview'},
+    {id:'projects',icon:'fa-folder-open',label:'Projects'},
+    {id:'skills',icon:'fa-code',label:'Skills'},
+    {id:'messages',icon:'fa-envelope',label:'Messages',badge:unread},
+    {id:'profile',icon:'fa-user-circle',label:'Profile'},
+  ];
+  const titles={overview:'Dashboard Overview',projects:'Manage Projects',skills:'Manage Skills',messages:'Messages & Enquiries',profile:'Profile Settings'};
+
+  return(
+    <div className="layout">
+      <div className="sidebar">
+        <div className="sidebar-logo">
+          <div className="dot">⚡</div>
+          <span>Admin Panel</span>
+        </div>
+        <nav>
+          {navItems.map(n=>(
+            <div key={n.id} className={`nav-item${page===n.id?' active':''}`} onClick={()=>setPage(n.id)}>
+              <i className={`fas ${n.icon}`}></i>
+              <span style={{flex:1}}>{n.label}</span>
+              {n.badge>0&&<span style={{background:'var(--accent)',color:'#fff',fontSize:11,padding:'1px 7px',borderRadius:10}}>{n.badge}</span>}
+            </div>
+          ))}
+        </nav>
+        <div className="sidebar-footer">
+          <div style={{fontSize:13,color:'var(--muted)',marginBottom:4,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{profile.name}</div>
+          <div style={{fontSize:11,color:'var(--muted)',marginBottom:12}}>{profile.role}</div>
+          <button className="btn btn-secondary btn-sm" onClick={logout} style={{width:'100%',justifyContent:'center'}}><i className="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+      </div>
+      <div className="main">
+        <div className="topbar">
+          <h2>{titles[page]}</h2>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <span className={`badge ${profile.available?'badge-green':'badge-red'}`}>{profile.available?'Open to Work':'Not Available'}</span>
+            <a href="index.html" target="_blank" className="btn btn-secondary btn-sm"><i className="fas fa-external-link-alt"></i> View Site</a>
+          </div>
+        </div>
+        <div className="content">
+          {page==='overview'&&<Overview projects={projects} skills={skills} messages={messages}/>}
+          {page==='projects'&&<ProjectsManager projects={projects} setProjects={setProjects}/>}
+          {page==='skills'&&<SkillsManager skills={skills} setSkills={setSkills}/>}
+          {page==='messages'&&<MessagesViewer messages={messages} setMessages={setMessages}/>}
+          {page==='profile'&&<ProfileEditor profile={profile} setProfile={setProfile}/>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
