@@ -1267,6 +1267,7 @@
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-sans">
         © 2026 Chris. Crafted with passion, HTML, Tailwind CSS, & JS.
+        <button onclick="openAdminPanel()" title="Admin" class="ml-3 opacity-20 hover:opacity-60 transition-opacity duration-300 text-slate-400 hover:text-purple-400 cursor-pointer bg-transparent border-none text-xs">⚙</button>
       </p>
       <!-- Footer links & socials -->
       <div class="flex items-center space-x-6">
@@ -1355,5 +1356,504 @@
     lucide.createIcons();
   </script>
   <script src="js/main.js"></script>
+  <!-- ============================================================ -->
+  <!-- ADMIN PANEL — accessible via hidden ⚙ button in footer      -->
+  <!-- ============================================================ -->
+
+  <!-- Admin Login Modal -->
+  <div id="admin-login-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)closeAdminLogin()">
+    <div style="background:#1e2535;border:1px solid #2a3348;border-radius:16px;padding:36px;width:340px;position:relative;">
+      <button onclick="closeAdminLogin()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#64748b;font-size:20px;cursor:pointer;">×</button>
+      <div style="width:44px;height:44px;background:linear-gradient(135deg,#7c3aed,#06b6d4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px;">⚡</div>
+      <h2 style="color:#e2e8f0;font-size:20px;font-weight:700;margin-bottom:4px;">Admin Access</h2>
+      <p style="color:#64748b;font-size:13px;margin-bottom:24px;">Enter your password to open the dashboard.</p>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:12px;color:#64748b;margin-bottom:6px;">Password</label>
+        <input id="admin-pw-input" type="password" placeholder="Enter admin password"
+          onkeydown="if(event.key==='Enter')submitAdminLogin()"
+          style="width:100%;background:#252d3d;border:1px solid #2a3348;border-radius:8px;padding:10px 12px;color:#e2e8f0;font-size:14px;outline:none;font-family:inherit;"
+          onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#2a3348'"/>
+      </div>
+      <div id="admin-pw-error" style="display:none;color:#ef4444;font-size:13px;margin-bottom:12px;">❌ Wrong password. Please try again.</div>
+      <button onclick="submitAdminLogin()" style="width:100%;background:linear-gradient(135deg,#7c3aed,#06b6d4);border:none;border-radius:8px;padding:11px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">
+        Sign In →
+      </button>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Panel (full screen overlay) -->
+  <div id="admin-panel" style="display:none;position:fixed;inset:0;z-index:10000;background:#0f1117;overflow:hidden;">
+    <!-- Sidebar -->
+    <div id="adm-sidebar" style="position:fixed;left:0;top:0;bottom:0;width:220px;background:#161b27;border-right:1px solid #2a3348;display:flex;flex-direction:column;">
+      <div style="padding:18px 16px;border-bottom:1px solid #2a3348;display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#06b6d4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;">⚡</div>
+        <span style="font-weight:700;font-size:15px;color:#e2e8f0;">Admin Panel</span>
+      </div>
+      <nav style="flex:1;padding:10px 8px;overflow-y:auto;">
+        <div class="adm-nav" data-page="overview" onclick="admPage('overview')">📊 Overview</div>
+        <div class="adm-nav" data-page="projects" onclick="admPage('projects')">📁 Projects</div>
+        <div class="adm-nav" data-page="skills" onclick="admPage('skills')">💻 Skills</div>
+        <div class="adm-nav" data-page="messages" onclick="admPage('messages')">✉️ Messages <span id="adm-badge" style="display:none;background:#7c3aed;color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;margin-left:auto;"></span></div>
+        <div class="adm-nav" data-page="profile" onclick="admPage('profile')">👤 Profile</div>
+      </nav>
+      <div style="padding:14px;border-top:1px solid #2a3348;">
+        <div id="adm-profile-name" style="font-size:12px;color:#64748b;margin-bottom:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+        <button onclick="closeAdminPanel()" style="width:100%;background:#252d3d;border:1px solid #2a3348;border-radius:8px;padding:8px;color:#e2e8f0;font-size:13px;cursor:pointer;font-family:inherit;">← Back to Portfolio</button>
+      </div>
+    </div>
+    <!-- Main area -->
+    <div style="margin-left:220px;height:100vh;overflow-y:auto;display:flex;flex-direction:column;">
+      <!-- Topbar -->
+      <div id="adm-topbar" style="padding:14px 28px;border-bottom:1px solid #2a3348;background:#161b27;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;">
+        <h2 id="adm-title" style="font-size:17px;font-weight:600;color:#e2e8f0;"></h2>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span id="adm-avail-badge" style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;"></span>
+        </div>
+      </div>
+      <!-- Content -->
+      <div id="adm-content" style="padding:24px;flex:1;"></div>
+    </div>
+  </div>
+
+  <style>
+    .adm-nav{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;color:#64748b;transition:.2s;margin-bottom:2px;}
+    .adm-nav:hover{background:#1e2535;color:#e2e8f0;}
+    .adm-nav.active{background:rgba(124,58,237,.15);color:#a78bfa;}
+    .adm-card{background:#1e2535;border:1px solid #2a3348;border-radius:12px;overflow:hidden;margin-bottom:20px;}
+    .adm-th{padding:11px 16px;text-align:left;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #2a3348;background:rgba(255,255,255,.02);}
+    .adm-td{padding:11px 16px;font-size:13px;border-bottom:1px solid #2a3348;color:#e2e8f0;vertical-align:top;}
+    .adm-tr:last-child .adm-td{border-bottom:none;}
+    .adm-tr:hover .adm-td{background:rgba(255,255,255,.02);}
+    .adm-input{width:100%;background:#252d3d;border:1px solid #2a3348;border-radius:8px;padding:9px 12px;color:#e2e8f0;font-size:13px;outline:none;font-family:inherit;transition:.2s;box-sizing:border-box;}
+    .adm-input:focus{border-color:#7c3aed;}
+    .adm-btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:.2s;}
+    .adm-btn-primary{background:#7c3aed;color:#fff;}
+    .adm-btn-primary:hover{opacity:.85;}
+    .adm-btn-secondary{background:#252d3d;color:#e2e8f0;border:1px solid #2a3348;}
+    .adm-btn-secondary:hover{border-color:#7c3aed;}
+    .adm-btn-danger{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);}
+    .adm-btn-sm{padding:5px 11px;font-size:12px;}
+    .adm-badge-green{background:rgba(34,197,94,.15);color:#22c55e;font-size:11px;padding:2px 10px;border-radius:12px;font-weight:600;}
+    .adm-badge-yellow{background:rgba(234,179,8,.15);color:#eab308;font-size:11px;padding:2px 10px;border-radius:12px;font-weight:600;}
+    .adm-badge-purple{background:rgba(124,58,237,.15);color:#a78bfa;font-size:11px;padding:2px 10px;border-radius:12px;font-weight:600;}
+    .adm-badge-cyan{background:rgba(6,182,212,.15);color:#06b6d4;font-size:11px;padding:2px 10px;border-radius:12px;font-weight:600;}
+    .adm-badge-red{background:rgba(239,68,68,.15);color:#ef4444;font-size:11px;padding:2px 10px;border-radius:12px;font-weight:600;}
+    .adm-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10100;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .adm-modal{background:#1e2535;border:1px solid #2a3348;border-radius:14px;padding:24px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;}
+    .adm-field{margin-bottom:14px;}
+    .adm-field label{display:block;font-size:12px;color:#64748b;margin-bottom:5px;}
+    .adm-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .adm-prog-bar{height:5px;background:#2a3348;border-radius:3px;overflow:hidden;flex:1;}
+    .adm-prog-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#06b6d4);border-radius:3px;transition:width .3s;}
+    .adm-tag{background:rgba(124,58,237,.2);color:#a78bfa;padding:2px 9px;border-radius:10px;font-size:12px;display:inline-flex;align-items:center;gap:4px;margin:2px;}
+    .adm-tags-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:4px;background:#252d3d;border:1px solid #2a3348;border-radius:8px;padding:6px 8px;min-height:40px;cursor:text;}
+    .adm-tags-input{background:none;border:none;outline:none;color:#e2e8f0;font-size:13px;min-width:80px;font-family:inherit;}
+    .adm-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px;}
+    .adm-stat{background:#1e2535;border:1px solid #2a3348;border-radius:10px;padding:18px;}
+    .adm-stat .lbl{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+    .adm-stat .val{font-size:26px;font-weight:700;}
+    .adm-stat .sub{font-size:11px;color:#64748b;margin-top:3px;}
+    .adm-msg{background:#1e2535;border:1px solid #2a3348;border-radius:10px;padding:16px;margin-bottom:10px;}
+    .adm-empty{text-align:center;padding:40px;color:#64748b;font-size:14px;}
+  </style>
+
+  <script>
+  // ── Admin Storage ──
+  const admStore = {
+    get:(k,d)=>{try{const v=localStorage.getItem('adm_'+k);return v?JSON.parse(v):d;}catch{return d;}},
+    set:(k,v)=>localStorage.setItem('adm_'+k,JSON.stringify(v)),
+  };
+
+  // ── Default Data ──
+  const ADM_DEF_PROJECTS=[
+    {id:1,title:'Portfolio Website',desc:'Responsive personal portfolio with AI chat, CV download, certifications and Formspree contact form.',tech:['HTML','CSS','JavaScript','Tailwind'],link:'https://kris-portfolio-website.vercel.app',github:'https://github.com/kris4509/portfolio-website',status:'Live'},
+    {id:2,title:'UniFlow Exam Card System',desc:'University web app for digital exam card submission, bulk printing and M-Pesa payments.',tech:['Python','Flask','MySQL','Bootstrap 5','M-Pesa API'],link:'',github:'https://github.com/kris4509/uniflow',status:'In Progress'},
+    {id:3,title:'Bead Artwork Ecommerce',desc:'Frontend ecommerce for Kenyan handcrafted beadwork with product catalog and WhatsApp ordering.',tech:['HTML','CSS','JavaScript'],link:'https://kris4509.github.io/bead-artwork-ecommerce-website/',github:'',status:'Live'},
+    {id:4,title:'Lecture Management System',desc:'University scheduling system concept with venue management and clash detection.',tech:['Python','Database Design'],link:'',github:'',status:'Completed'},
+  ];
+  const ADM_DEF_SKILLS=[
+    {id:1,name:'HTML5',category:'Languages',level:95},{id:2,name:'CSS3 & Tailwind',category:'Languages',level:90},
+    {id:3,name:'JavaScript',category:'Languages',level:85},{id:4,name:'Python & Flask',category:'Languages',level:80},
+    {id:5,name:'Java',category:'Languages',level:75},{id:6,name:'Bootstrap 5',category:'Languages',level:85},
+    {id:7,name:'MySQL',category:'Databases',level:78},{id:8,name:'SQLAlchemy ORM',category:'Databases',level:72},{id:9,name:'SQL',category:'Databases',level:80},
+    {id:10,name:'Git & GitHub',category:'Tools',level:88},{id:11,name:'Vercel',category:'Tools',level:85},
+    {id:12,name:'Linux & Terminal',category:'Tools',level:70},{id:13,name:'REST APIs',category:'Tools',level:78},{id:14,name:'M-Pesa Daraja API',category:'Tools',level:72},
+  ];
+  const ADM_DEF_PROFILE={name:'Chrisper Mwangi Wambui',role:'CS Student & Web Developer',email:'chrispermwash@gmail.com',phone:'0707546201',location:'Nairobi, Kenya',university:'Egerton University',github:'github.com/kris4509',portfolio:'kris-portfolio-website.vercel.app',bio:'Computer Science student at Egerton University passionate about building modern web applications.',available:true};
+  const ADM_DEF_MESSAGES=[
+    {id:1,name:'Peter Ndindi',email:'peterndindi41@gmail.com',subject:'Greeting',message:'Hello, I came across your portfolio and wanted to reach out.',date:'2024-05-21',read:false},
+    {id:2,name:'Peter',email:'peter@gmail.com',subject:'Job vacancy',message:'Your application went through. We would like to discuss an opportunity with you.',date:'2024-05-21',read:false},
+  ];
+
+  let admData = {
+    projects: admStore.get('projects', ADM_DEF_PROJECTS),
+    skills:   admStore.get('skills',   ADM_DEF_SKILLS),
+    messages: admStore.get('messages', ADM_DEF_MESSAGES),
+    profile:  admStore.get('profile',  ADM_DEF_PROFILE),
+  };
+  let admCurrentPage = 'overview';
+  let admEditingId = null;
+
+  // ── Panel open/close ──
+  function openAdminPanel() {
+    document.getElementById('admin-login-modal').style.display = 'flex';
+    setTimeout(()=>document.getElementById('admin-pw-input').focus(), 100);
+  }
+  function closeAdminLogin() {
+    document.getElementById('admin-login-modal').style.display = 'none';
+    document.getElementById('admin-pw-input').value = '';
+    document.getElementById('admin-pw-error').style.display = 'none';
+  }
+  function submitAdminLogin() {
+    const pw = document.getElementById('admin-pw-input').value;
+    if (pw === 'chris2024') {
+      closeAdminLogin();
+      document.getElementById('admin-panel').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      admPage('overview');
+    } else {
+      document.getElementById('admin-pw-error').style.display = 'block';
+      document.getElementById('admin-pw-input').value = '';
+      document.getElementById('admin-pw-input').focus();
+    }
+  }
+  function closeAdminPanel() {
+    document.getElementById('admin-panel').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  // ── Navigation ──
+  function admPage(page) {
+    admCurrentPage = page;
+    document.querySelectorAll('.adm-nav').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+    const titles = {overview:'Dashboard Overview',projects:'Manage Projects',skills:'Manage Skills',messages:'Messages & Enquiries',profile:'Profile Settings'};
+    document.getElementById('adm-title').textContent = titles[page];
+    const p = admData.profile;
+    document.getElementById('adm-profile-name').textContent = p.name;
+    const ab = document.getElementById('adm-avail-badge');
+    ab.textContent = p.available ? 'Open to Work' : 'Not Available';
+    ab.className = p.available ? 'adm-badge-green' : 'adm-badge-red';
+    // update message badge
+    const unread = admData.messages.filter(m=>!m.read).length;
+    const b = document.getElementById('adm-badge');
+    b.textContent = unread; b.style.display = unread ? 'inline' : 'none';
+    // render
+    const renders = {overview:admRenderOverview,projects:admRenderProjects,skills:admRenderSkills,messages:admRenderMessages,profile:admRenderProfile};
+    (renders[page] || admRenderOverview)();
+  }
+
+  function admSave(key) { admStore.set(key, admData[key]); }
+
+  // ─────────────── OVERVIEW ───────────────
+  function admRenderOverview() {
+    const {projects,skills,messages} = admData;
+    const unread = messages.filter(m=>!m.read).length;
+    const live = projects.filter(p=>p.status==='Live').length;
+    document.getElementById('adm-content').innerHTML = `
+      <div class="adm-stat-grid">
+        <div class="adm-stat"><div class="lbl">Projects</div><div class="val" style="color:#a78bfa">${projects.length}</div><div class="sub">${live} live</div></div>
+        <div class="adm-stat"><div class="lbl">Skills</div><div class="val" style="color:#06b6d4">${skills.length}</div><div class="sub">3 categories</div></div>
+        <div class="adm-stat"><div class="lbl">Messages</div><div class="val" style="color:#eab308">${messages.length}</div><div class="sub">${unread} unread</div></div>
+        <div class="adm-stat"><div class="lbl">Certifications</div><div class="val" style="color:#22c55e">5</div><div class="sub">W3Schools</div></div>
+      </div>
+      <div class="adm-card">
+        <div style="padding:14px 18px;border-bottom:1px solid #2a3348;font-weight:600;font-size:14px;color:#e2e8f0;">Projects at a Glance</div>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead><tr><th class="adm-th">Title</th><th class="adm-th">Stack</th><th class="adm-th">Status</th></tr></thead>
+          <tbody>${projects.map(p=>`
+            <tr class="adm-tr">
+              <td class="adm-td"><div style="font-weight:600">${p.title}</div><div style="font-size:11px;color:#64748b;margin-top:2px">${p.desc.slice(0,70)}...</div></td>
+              <td class="adm-td">${p.tech.slice(0,2).map(t=>`<span class="adm-badge-purple" style="margin-right:3px;display:inline-block;margin-bottom:2px">${t}</span>`).join('')}${p.tech.length>2?`<span style="font-size:11px;color:#64748b">+${p.tech.length-2}</span>`:''}</td>
+              <td class="adm-td"><span class="adm-badge-${p.status==='Live'?'green':p.status==='In Progress'?'yellow':'cyan'}">${p.status}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  // ─────────────── PROJECTS ───────────────
+  function admRenderProjects(search='') {
+    const filtered = admData.projects.filter(p=>p.title.toLowerCase().includes(search.toLowerCase()));
+    document.getElementById('adm-content').innerHTML = `
+      <div class="adm-card">
+        <div style="padding:14px 18px;border-bottom:1px solid #2a3348;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <span style="font-weight:600;font-size:14px;color:#e2e8f0;">All Projects (${admData.projects.length})</span>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <input class="adm-input" style="width:180px;padding:7px 12px;" placeholder="Search..." value="${search}" oninput="admRenderProjects(this.value)"/>
+            <button class="adm-btn adm-btn-primary" onclick="admOpenProjectForm()">+ Add Project</button>
+          </div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead><tr><th class="adm-th">Project</th><th class="adm-th">Stack</th><th class="adm-th">Status</th><th class="adm-th">Links</th><th class="adm-th">Actions</th></tr></thead>
+          <tbody>${filtered.length===0?`<tr><td colspan="5"><div class="adm-empty">No projects found</div></td></tr>`:
+          filtered.map(p=>`<tr class="adm-tr">
+            <td class="adm-td"><div style="font-weight:600">${p.title}</div><div style="font-size:11px;color:#64748b;margin-top:2px;max-width:220px">${p.desc.slice(0,75)}${p.desc.length>75?'...':''}</div></td>
+            <td class="adm-td" style="max-width:160px">${p.tech.slice(0,3).map(t=>`<span class="adm-badge-purple" style="display:inline-block;margin:1px">${t}</span>`).join('')}${p.tech.length>3?`<span style="font-size:11px;color:#64748b">+${p.tech.length-3}</span>`:''}</td>
+            <td class="adm-td"><span class="adm-badge-${p.status==='Live'?'green':p.status==='In Progress'?'yellow':p.status==='Completed'?'cyan':'red'}">${p.status}</span></td>
+            <td class="adm-td" style="white-space:nowrap">${p.link?`<a href="${p.link}" target="_blank" style="color:#06b6d4;font-size:12px;text-decoration:none;margin-right:8px">🔗 Live</a>`:''} ${p.github?`<a href="${p.github}" target="_blank" style="color:#64748b;font-size:12px;text-decoration:none">⚫ Repo</a>`:''}</td>
+            <td class="adm-td"><div style="display:flex;gap:6px">
+              <button class="adm-btn adm-btn-secondary adm-btn-sm" onclick="admOpenProjectForm(${p.id})">✏️</button>
+              <button class="adm-btn adm-btn-danger adm-btn-sm" onclick="admDeleteProject(${p.id})">🗑</button>
+            </div></td>
+          </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  function admOpenProjectForm(id) {
+    const p = id ? admData.projects.find(x=>x.id===id) : {id:null,title:'',desc:'',tech:[],link:'',github:'',status:'In Progress'};
+    admEditingId = id || null;
+    const modal = document.createElement('div');
+    modal.className = 'adm-modal-bg';
+    modal.id = 'adm-proj-modal';
+    modal.innerHTML = `
+      <div class="adm-modal">
+        <h3 style="font-size:16px;font-weight:600;color:#e2e8f0;margin-bottom:18px">${id?'Edit Project':'New Project'}</h3>
+        <div class="adm-field"><label>Title *</label><input class="adm-input" id="apf-title" value="${p.title}" placeholder="e.g. UniFlow Exam System"/></div>
+        <div class="adm-field"><label>Description</label><textarea class="adm-input" id="apf-desc" style="min-height:80px;resize:vertical">${p.desc}</textarea></div>
+        <div class="adm-field"><label>Tech Stack (Enter to add)</label>
+          <div class="adm-tags-wrap" id="apf-tags-wrap" onclick="document.getElementById('apf-tag-input').focus()">
+            ${p.tech.map(t=>`<span class="adm-tag">${t}<span onclick="admRemoveTag('${t}')" style="cursor:pointer;opacity:.6;margin-left:3px">×</span></span>`).join('')}
+            <input class="adm-tags-input" id="apf-tag-input" placeholder="Add tag..." onkeydown="admAddTag(event,'apf-tags-wrap','apf-tag-input')"/>
+          </div>
+          <input type="hidden" id="apf-tech" value='${JSON.stringify(p.tech)}'/>
+        </div>
+        <div class="adm-field"><label>Status</label>
+          <select class="adm-input" id="apf-status">
+            ${['In Progress','Live','Completed','On Hold'].map(s=>`<option${s===p.status?' selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="adm-2col">
+          <div class="adm-field"><label>Live URL</label><input class="adm-input" id="apf-link" value="${p.link}" placeholder="https://..."/></div>
+          <div class="adm-field"><label>GitHub URL</label><input class="adm-input" id="apf-github" value="${p.github}" placeholder="https://github.com/..."/></div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px">
+          <button class="adm-btn adm-btn-secondary" onclick="document.getElementById('adm-proj-modal').remove()">Cancel</button>
+          <button class="adm-btn adm-btn-primary" onclick="admSaveProject()">💾 ${id?'Update':'Save'} Project</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.onclick = e=>{ if(e.target===modal) modal.remove(); };
+  }
+
+  function admAddTag(e, wrapId, inputId) {
+    if ((e.key==='Enter'||e.key===',') && e.target.value.trim()) {
+      e.preventDefault();
+      const tag = e.target.value.trim();
+      let tech = JSON.parse(document.getElementById('apf-tech').value);
+      if (!tech.includes(tag)) {
+        tech.push(tag);
+        document.getElementById('apf-tech').value = JSON.stringify(tech);
+        const span = document.createElement('span');
+        span.className = 'adm-tag';
+        span.innerHTML = `${tag}<span onclick="admRemoveTag('${tag}')" style="cursor:pointer;opacity:.6;margin-left:3px">×</span>`;
+        document.getElementById(wrapId).insertBefore(span, document.getElementById(inputId));
+      }
+      e.target.value = '';
+    }
+  }
+
+  function admRemoveTag(tag) {
+    let tech = JSON.parse(document.getElementById('apf-tech').value);
+    tech = tech.filter(t=>t!==tag);
+    document.getElementById('apf-tech').value = JSON.stringify(tech);
+    document.querySelectorAll('.adm-tag').forEach(el=>{ if(el.textContent.replace('×','').trim()===tag) el.remove(); });
+  }
+
+  function admSaveProject() {
+    const title = document.getElementById('apf-title').value.trim();
+    if (!title) return alert('Title is required');
+    const project = {
+      id: admEditingId || Date.now(),
+      title,
+      desc: document.getElementById('apf-desc').value.trim(),
+      tech: JSON.parse(document.getElementById('apf-tech').value || '[]'),
+      status: document.getElementById('apf-status').value,
+      link: document.getElementById('apf-link').value.trim(),
+      github: document.getElementById('apf-github').value.trim(),
+    };
+    if (admEditingId) admData.projects = admData.projects.map(p=>p.id===admEditingId?project:p);
+    else admData.projects.push(project);
+    admSave('projects');
+    document.getElementById('adm-proj-modal').remove();
+    admRenderProjects();
+  }
+
+  function admDeleteProject(id) {
+    if (!confirm('Delete this project?')) return;
+    admData.projects = admData.projects.filter(p=>p.id!==id);
+    admSave('projects');
+    admRenderProjects();
+  }
+
+  // ─────────────── SKILLS ───────────────
+  function admRenderSkills(filter='All') {
+    const cats = ['All','Languages','Databases','Tools'];
+    const filtered = filter==='All' ? admData.skills : admData.skills.filter(s=>s.category===filter);
+    const catColor = {Languages:'adm-badge-purple',Databases:'adm-badge-cyan',Tools:'adm-badge-green'};
+    document.getElementById('adm-content').innerHTML = `
+      <div class="adm-card">
+        <div style="padding:14px 18px;border-bottom:1px solid #2a3348;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-weight:600;font-size:14px;color:#e2e8f0;">Skills</span>
+            ${cats.map(c=>`<button class="adm-btn adm-btn-sm ${c===filter?'adm-btn-primary':'adm-btn-secondary'}" onclick="admRenderSkills('${c}')">${c}</button>`).join('')}
+          </div>
+          <button class="adm-btn adm-btn-primary" onclick="admOpenSkillForm()">+ Add Skill</button>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead><tr><th class="adm-th">Skill</th><th class="adm-th">Category</th><th class="adm-th">Proficiency</th><th class="adm-th">Actions</th></tr></thead>
+          <tbody>${filtered.length===0?`<tr><td colspan="4"><div class="adm-empty">No skills in this category</div></td></tr>`:
+          filtered.map(s=>`<tr class="adm-tr">
+            <td class="adm-td" style="font-weight:600">${s.name}</td>
+            <td class="adm-td"><span class="${catColor[s.category]||'adm-badge-purple'}">${s.category}</span></td>
+            <td class="adm-td" style="min-width:180px"><div style="display:flex;align-items:center;gap:10px"><div class="adm-prog-bar"><div class="adm-prog-fill" style="width:${s.level}%"></div></div><span style="font-size:12px;color:#64748b;min-width:30px;text-align:right">${s.level}%</span></div></td>
+            <td class="adm-td"><div style="display:flex;gap:6px">
+              <button class="adm-btn adm-btn-secondary adm-btn-sm" onclick="admOpenSkillForm(${s.id})">✏️</button>
+              <button class="adm-btn adm-btn-danger adm-btn-sm" onclick="admDeleteSkill(${s.id})">🗑</button>
+            </div></td>
+          </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  function admOpenSkillForm(id) {
+    const s = id ? admData.skills.find(x=>x.id===id) : {id:null,name:'',category:'Languages',level:80};
+    admEditingId = id || null;
+    const modal = document.createElement('div');
+    modal.className = 'adm-modal-bg';
+    modal.id = 'adm-skill-modal';
+    modal.innerHTML = `
+      <div class="adm-modal" style="max-width:400px">
+        <h3 style="font-size:16px;font-weight:600;color:#e2e8f0;margin-bottom:18px">${id?'Edit Skill':'Add Skill'}</h3>
+        <div class="adm-field"><label>Skill Name *</label><input class="adm-input" id="asf-name" value="${s.name}" placeholder="e.g. React, Docker..."/></div>
+        <div class="adm-field"><label>Category</label>
+          <select class="adm-input" id="asf-cat">
+            ${['Languages','Databases','Tools'].map(c=>`<option${c===s.category?' selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="adm-field">
+          <label>Proficiency: <strong id="asf-lbl" style="color:#a78bfa">${s.level}%</strong></label>
+          <input type="range" id="asf-level" min="10" max="100" step="5" value="${s.level}" oninput="document.getElementById('asf-lbl').textContent=this.value+'%'" style="width:100%;margin-top:8px"/>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:3px"><span>Beginner</span><span>Intermediate</span><span>Expert</span></div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px">
+          <button class="adm-btn adm-btn-secondary" onclick="document.getElementById('adm-skill-modal').remove()">Cancel</button>
+          <button class="adm-btn adm-btn-primary" onclick="admSaveSkill()">💾 ${id?'Update':'Save'}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.onclick = e=>{ if(e.target===modal) modal.remove(); };
+  }
+
+  function admSaveSkill() {
+    const name = document.getElementById('asf-name').value.trim();
+    if (!name) return alert('Skill name required');
+    const skill = { id: admEditingId||Date.now(), name, category: document.getElementById('asf-cat').value, level: +document.getElementById('asf-level').value };
+    if (admEditingId) admData.skills = admData.skills.map(s=>s.id===admEditingId?skill:s);
+    else admData.skills.push(skill);
+    admSave('skills');
+    document.getElementById('adm-skill-modal').remove();
+    admRenderSkills();
+  }
+
+  function admDeleteSkill(id) {
+    if (!confirm('Remove this skill?')) return;
+    admData.skills = admData.skills.filter(s=>s.id!==id);
+    admSave('skills');
+    admRenderSkills();
+  }
+
+  // ─────────────── MESSAGES ───────────────
+  function admRenderMessages() {
+    const msgs = admData.messages;
+    const unread = msgs.filter(m=>!m.read).length;
+    document.getElementById('adm-content').innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-size:13px;color:#64748b">${msgs.length} total · <span style="color:#eab308">${unread} unread</span></span>
+        ${unread>0?`<button class="adm-btn adm-btn-secondary adm-btn-sm" onclick="admMarkAllRead()">✓ Mark all read</button>`:''}
+      </div>
+      ${msgs.length===0?`<div class="adm-empty">📭 No messages yet. They'll appear here when someone uses your contact form.</div>`:''}
+      ${msgs.map(m=>`
+        <div class="adm-msg" style="border-left:3px solid ${m.read?'#2a3348':'#7c3aed'}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+            <div>
+              <div style="font-weight:600;font-size:14px;color:#e2e8f0">${m.name} ${!m.read?`<span class="adm-badge-purple" style="margin-left:6px">NEW</span>`:''}</div>
+              <div style="font-size:11px;color:#64748b;margin-top:2px">✉ ${m.email} · 📅 ${m.date}</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              ${!m.read?`<button class="adm-btn adm-btn-secondary adm-btn-sm" onclick="admMarkRead(${m.id})" style="color:#22c55e;border-color:rgba(34,197,94,.3)">✓</button>`:''}
+              <a href="mailto:${m.email}?subject=Re: ${m.subject}" class="adm-btn adm-btn-secondary adm-btn-sm" style="text-decoration:none">↩ Reply</a>
+              <button class="adm-btn adm-btn-danger adm-btn-sm" onclick="admDeleteMsg(${m.id})">🗑</button>
+            </div>
+          </div>
+          <div style="font-size:12px;color:#06b6d4;margin-bottom:5px">🏷 ${m.subject}</div>
+          <div style="font-size:13px;color:#94a3b8;line-height:1.6">${m.message}</div>
+        </div>`).join('')}`;
+  }
+
+  function admMarkRead(id) { admData.messages = admData.messages.map(m=>m.id===id?{...m,read:true}:m); admSave('messages'); admRenderMessages(); admPage('messages'); }
+  function admMarkAllRead() { admData.messages = admData.messages.map(m=>({...m,read:true})); admSave('messages'); admRenderMessages(); admPage('messages'); }
+  function admDeleteMsg(id) { if(!confirm('Delete message?')) return; admData.messages=admData.messages.filter(m=>m.id!==id); admSave('messages'); admRenderMessages(); }
+
+  // ─────────────── PROFILE ───────────────
+  function admRenderProfile() {
+    const p = admData.profile;
+    document.getElementById('adm-content').innerHTML = `
+      <div class="adm-card" style="padding:22px">
+        <h3 style="font-size:15px;font-weight:600;color:#e2e8f0;margin-bottom:18px">👤 Personal Information</h3>
+        <div class="adm-2col">
+          <div class="adm-field"><label>Full Name</label><input class="adm-input" id="aprf-name" value="${p.name}"/></div>
+          <div class="adm-field"><label>Role / Title</label><input class="adm-input" id="aprf-role" value="${p.role}"/></div>
+          <div class="adm-field"><label>Email</label><input class="adm-input" id="aprf-email" value="${p.email}"/></div>
+          <div class="adm-field"><label>Phone</label><input class="adm-input" id="aprf-phone" value="${p.phone}"/></div>
+          <div class="adm-field"><label>Location</label><input class="adm-input" id="aprf-loc" value="${p.location}"/></div>
+          <div class="adm-field"><label>University</label><input class="adm-input" id="aprf-uni" value="${p.university}"/></div>
+          <div class="adm-field"><label>GitHub</label><input class="adm-input" id="aprf-gh" value="${p.github}"/></div>
+          <div class="adm-field"><label>Portfolio URL</label><input class="adm-input" id="aprf-port" value="${p.portfolio}"/></div>
+        </div>
+        <div class="adm-field"><label>Bio</label><textarea class="adm-input" id="aprf-bio" style="min-height:100px;resize:vertical">${p.bio}</textarea></div>
+        <div style="display:flex;align-items:center;gap:12px;margin:10px 0 18px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#e2e8f0">
+            <input type="checkbox" id="aprf-avail" ${p.available?'checked':''} style="width:16px;height:16px"/>
+            Available for hire / internships
+          </label>
+          <span id="aprf-avail-badge" class="${p.available?'adm-badge-green':'adm-badge-red'}">${p.available?'Open to Work':'Not Available'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="adm-btn adm-btn-primary" onclick="admSaveProfile()">💾 Save Changes</button>
+          <span id="aprf-saved" style="display:none;color:#22c55e;font-size:13px">✅ Saved!</span>
+        </div>
+      </div>`;
+    document.getElementById('aprf-avail').onchange = function() {
+      const b = document.getElementById('aprf-avail-badge');
+      b.textContent = this.checked?'Open to Work':'Not Available';
+      b.className = this.checked?'adm-badge-green':'adm-badge-red';
+    };
+  }
+
+  function admSaveProfile() {
+    admData.profile = {
+      name: document.getElementById('aprf-name').value.trim(),
+      role: document.getElementById('aprf-role').value.trim(),
+      email: document.getElementById('aprf-email').value.trim(),
+      phone: document.getElementById('aprf-phone').value.trim(),
+      location: document.getElementById('aprf-loc').value.trim(),
+      university: document.getElementById('aprf-uni').value.trim(),
+      github: document.getElementById('aprf-gh').value.trim(),
+      portfolio: document.getElementById('aprf-port').value.trim(),
+      bio: document.getElementById('aprf-bio').value.trim(),
+      available: document.getElementById('aprf-avail').checked,
+    };
+    admSave('profile');
+    const s = document.getElementById('aprf-saved');
+    s.style.display = 'inline';
+    setTimeout(()=>s.style.display='none', 3000);
+    admPage('profile');
+  }
+  </script>
+
 </body>
+HTMLEOF
 </html>
