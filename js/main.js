@@ -564,6 +564,13 @@ function switchSkillTab(tab) {
     { id:4, title:'UniFlow — Exam Card System', desc:'A university web app where students digitally submit exam cards to their class rep for bulk printing and dean stamping.', tech:['Python','Flask','MySQL','Bootstrap 5','M-Pesa API','SQLAlchemy'], link:'', github:'https://github.com/kris4509/uniflow', status:'In Progress', image:'assets/images/project-uniflow.png' },
   ];
 
+  // Version check — clears stale project data so images are restored
+  const DATA_VERSION = 'v3';
+  if (localStorage.getItem('adm_data_version') !== DATA_VERSION) {
+    localStorage.removeItem('adm_projects');
+    localStorage.setItem('adm_data_version', DATA_VERSION);
+  }
+
   let projects;
   try {
     const stored = localStorage.getItem('adm_projects');

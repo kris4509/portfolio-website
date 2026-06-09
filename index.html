@@ -1307,10 +1307,10 @@
 
   // ── Default Data ──
   const ADM_DEF_PROJECTS=[
-    {id:1,title:'Portfolio Website',desc:'Responsive personal portfolio with AI chat, CV download, certifications and Formspree contact form.',tech:['HTML','CSS','JavaScript','Tailwind'],link:'https://kris-portfolio-website.vercel.app',github:'https://github.com/kris4509/portfolio-website',status:'Live'},
-    {id:2,title:'UniFlow Exam Card System',desc:'University web app for digital exam card submission, bulk printing and M-Pesa payments.',tech:['Python','Flask','MySQL','Bootstrap 5','M-Pesa API'],link:'',github:'https://github.com/kris4509/uniflow',status:'In Progress'},
-    {id:3,title:'Bead Artwork Ecommerce',desc:'Frontend ecommerce for Kenyan handcrafted beadwork with product catalog and WhatsApp ordering.',tech:['HTML','CSS','JavaScript'],link:'https://kris4509.github.io/bead-artwork-ecommerce-website/',github:'',status:'Live'},
-    {id:4,title:'Lecture Management System',desc:'University scheduling system concept with venue management and clash detection.',tech:['Python','Database Design'],link:'',github:'',status:'Completed'},
+    {id:1,title:'Lecture Management & Scheduling System',desc:'A university scheduling system concept with venue management and timetable clash detection using Python and database design.',tech:['Python','Database Design','UML'],link:'',github:'',status:'Completed',image:'assets/images/project-lecture-new.png'},
+    {id:2,title:'Venue Booking System',desc:'A dynamic booking system for managing venue reservations with availability tracking and scheduling features.',tech:['HTML','CSS','JavaScript','Python'],link:'',github:'',status:'Completed',image:'assets/images/project-booking-new.png'},
+    {id:3,title:'Bead Artwork Ecommerce',desc:'A frontend ecommerce site showcasing Kenyan handcrafted beadwork with product catalog, WhatsApp ordering and lightbox gallery.',tech:['HTML','CSS','JavaScript'],link:'https://kris4509.github.io/bead-artwork-ecommerce-website/',github:'',status:'Live',image:'assets/images/project-ecommerce.png'},
+    {id:4,title:'UniFlow — Exam Card System',desc:'A university web app where students digitally submit exam cards to their class rep for bulk printing and dean stamping.',tech:['Python','Flask','MySQL','Bootstrap 5','M-Pesa API','SQLAlchemy'],link:'',github:'https://github.com/kris4509/uniflow',status:'In Progress',image:'assets/images/project-uniflow.png'},
   ];
   const ADM_DEF_SKILLS=[
     {id:1,name:'HTML5',category:'Languages',level:95},{id:2,name:'CSS3 & Tailwind',category:'Languages',level:90},
@@ -1325,6 +1325,14 @@
     {id:1,name:'Peter Ndindi',email:'peterndindi41@gmail.com',subject:'Greeting',message:'Hello, I came across your portfolio and wanted to reach out.',date:'2024-05-21',read:false},
     {id:2,name:'Peter',email:'peter@gmail.com',subject:'Job vacancy',message:'Your application went through. We would like to discuss an opportunity with you.',date:'2024-05-21',read:false},
   ];
+
+  // Version check — resets stale project data so images are restored
+  const DATA_VERSION = 'v3';
+  if (localStorage.getItem('adm_data_version') !== DATA_VERSION) {
+    localStorage.removeItem('adm_projects');
+    localStorage.removeItem('portfolio_analytics');
+    localStorage.setItem('adm_data_version', DATA_VERSION);
+  }
 
   let admData = {
     projects: admStore.get('projects', ADM_DEF_PROJECTS),
@@ -1636,6 +1644,21 @@
           <div class="adm-field"><label>Live URL</label><input class="adm-input" id="apf-link" value="${p.link}" placeholder="https://..."/></div>
           <div class="adm-field"><label>GitHub URL</label><input class="adm-input" id="apf-github" value="${p.github}" placeholder="https://github.com/..."/></div>
         </div>
+        <div class="adm-field">
+          <label>Project Preview Image</label>
+          <div id="apf-img-preview" style="width:100%;height:130px;background:#252d3d;border:1px solid #2a3348;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:8px;">
+            ${p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=color:#64748b;font-size:12px>Preview unavailable</span>'" />` : `<span style="color:#64748b;font-size:12px;">No image yet</span>`}
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#7c3aed;border:none;border-radius:8px;font-size:12px;color:#fff;font-family:inherit;">
+              📁 Upload Image
+              <input type="file" accept="image/*" style="display:none;" onchange="admHandleImageUpload(this)"/>
+            </label>
+            <span style="font-size:12px;color:#64748b;">or paste a URL / path:</span>
+          </div>
+          <input class="adm-input" id="apf-image-url" value="${p.image && !p.image.startsWith('data:') ? p.image : ''}" placeholder="assets/images/project-xx.png or https://..." oninput="admPreviewURL(this.value)" style="margin-top:8px"/>
+          <input type="hidden" id="apf-image-data" value="${p.image||''}"/>
+        </div>
         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px">
           <button class="adm-btn adm-btn-secondary" onclick="document.getElementById('adm-proj-modal').remove()">Cancel</button>
           <button class="adm-btn adm-btn-primary" onclick="admSaveProject()">💾 ${id?'Update':'Save'} Project</button>
@@ -1669,6 +1692,34 @@
     document.querySelectorAll('.adm-tag').forEach(el=>{ if(el.textContent.replace('×','').trim()===tag) el.remove(); });
   }
 
+  function admHandleImageUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    // Warn if image is very large
+    if (file.size > 500 * 1024) {
+      if (!confirm(`This image is ${(file.size/1024).toFixed(0)}KB. Large images slow down the page. Continue?`)) return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = e.target.result;
+      document.getElementById('apf-image-data').value = data;
+      document.getElementById('apf-image-url').value = '';
+      const preview = document.getElementById('apf-img-preview');
+      preview.innerHTML = `<img src="${data}" style="width:100%;height:100%;object-fit:cover;"/>`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function admPreviewURL(url) {
+    document.getElementById('apf-image-data').value = url;
+    const preview = document.getElementById('apf-img-preview');
+    if (url) {
+      preview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=color:#ef4444;font-size:12px>Image not found at this path</span>'"/>`;
+    } else {
+      preview.innerHTML = `<span style="color:#64748b;font-size:12px">No image yet</span>`;
+    }
+  }
+
   function admSaveProject() {
     const title = document.getElementById('apf-title').value.trim();
     if (!title) return alert('Title is required');
@@ -1680,13 +1731,14 @@
       status: document.getElementById('apf-status').value,
       link: document.getElementById('apf-link').value.trim(),
       github: document.getElementById('apf-github').value.trim(),
+      image: document.getElementById('apf-image-data').value.trim(),
     };
     if (admEditingId) admData.projects = admData.projects.map(p=>p.id===admEditingId?project:p);
     else admData.projects.push(project);
     admSave('projects');
     document.getElementById('adm-proj-modal').remove();
     admRenderProjects();
-    portfolioRenderProjects(); // live-update the portfolio side
+    portfolioRenderProjects();
   }
 
   function admDeleteProject(id) {
