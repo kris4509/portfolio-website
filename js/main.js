@@ -715,3 +715,126 @@ function switchSkillTab(tab) {
     if (panelTool && tools.length) panelTool.innerHTML = tools.map(buildRingCard).join('');
   }
 })();
+
+// ===== Portfolio Analytics Tracker =====
+const Analytics = {
+  _key: 'portfolio_analytics',
+
+  _load() {
+    try { return JSON.parse(localStorage.getItem(this._key)) || this._default(); }
+    catch { return this._default(); }
+  },
+
+  _default() {
+    return {
+      totalVisits: 0,
+      lastVisit: null,
+      sessions: [],         // last 30 sessions
+      sectionViews: {},     // { home:5, about:3, ... }
+      projectClicks: {},    // { 'ProjectTitle': 3 }
+      events: {
+        chatOpens: 0,
+        cvDownloads: 0,
+        contactFormSends: 0,
+        githubClicks: 0,
+        linkedinClicks: 0,
+      }
+    };
+  },
+
+  _save(data) {
+    localStorage.setItem(this._key, JSON.stringify(data));
+  },
+
+  trackVisit() {
+    const data = this._load();
+    const now = new Date().toISOString();
+    const today = now.slice(0, 10);
+
+    data.totalVisits = (data.totalVisits || 0) + 1;
+    data.lastVisit = now;
+
+    // Keep last 30 sessions
+    if (!data.sessions) data.sessions = [];
+    data.sessions.unshift({ date: today, time: now.slice(11, 16), referrer: document.referrer || 'Direct' });
+    if (data.sessions.length > 30) data.sessions = data.sessions.slice(0, 30);
+
+    this._save(data);
+  },
+
+  trackSection(section) {
+    const data = this._load();
+    if (!data.sectionViews) data.sectionViews = {};
+    data.sectionViews[section] = (data.sectionViews[section] || 0) + 1;
+    this._save(data);
+  },
+
+  trackProject(title) {
+    const data = this._load();
+    if (!data.projectClicks) data.projectClicks = {};
+    data.projectClicks[title] = (data.projectClicks[title] || 0) + 1;
+    this._save(data);
+  },
+
+  trackEvent(eventName) {
+    const data = this._load();
+    if (!data.events) data.events = {};
+    data.events[eventName] = (data.events[eventName] || 0) + 1;
+    this._save(data);
+  },
+
+  getData() { return this._load(); },
+  reset() { localStorage.removeItem(this._key); }
+};
+
+// Track page visit
+Analytics.trackVisit();
+
+// Track section views via IntersectionObserver
+const sectionTracker = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.getAttribute('id');
+      if (id) Analytics.trackSection(id);
+    }
+  });
+}, { threshold: 0.4 });
+
+document.querySelectorAll('section[id]').forEach(s => sectionTracker.observe(s));
+
+// Track project link clicks
+document.addEventListener('click', (e) => {
+  const projectCard = e.target.closest('.project-card');
+  if (projectCard) {
+    const title = projectCard.querySelector('h4')?.textContent?.trim();
+    if (title) Analytics.trackProject(title);
+  }
+
+  // CV download
+  if (e.target.closest('a[download]') || e.target.closest('.cv-download-btn')) {
+    Analytics.trackEvent('cvDownloads');
+  }
+
+  // GitHub link in navbar/footer
+  if (e.target.closest('a[href*="github.com"]')) {
+    Analytics.trackEvent('githubClicks');
+  }
+
+  // LinkedIn link
+  if (e.target.closest('a[href*="linkedin.com"]')) {
+    Analytics.trackEvent('linkedinClicks');
+  }
+});
+
+// Track chat opens
+document.getElementById('chat-widget-button')?.addEventListener('click', () => {
+  Analytics.trackEvent('chatOpens');
+});
+
+// Track contact form sends
+document.getElementById('contact-form')?.addEventListener('submit', () => {
+  Analytics.trackEvent('contactFormSends');
+});
+
+// Expose globally for admin dashboard
+window.Analytics = Analytics;
