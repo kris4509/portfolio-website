@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
   revealElements.forEach(el => revealObserver.observe(el));
+  window.revealObserver = revealObserver; // expose for dynamically added cards
 
   // ===== Typewriter Effect =====
   const typewriterEl = document.getElementById('typewriter');
@@ -543,3 +544,174 @@ function switchSkillTab(tab) {
     }
   });
 }
+// ===== Dynamic Projects Renderer =====
+// Reads from admin dashboard localStorage and renders project cards
+(function renderProjects() {
+  const grid = document.getElementById('projects-grid');
+  if (!grid) return;
+
+  const statusColors = {
+    'Live':        'text-green-400 bg-green-400/10 border-green-400/20',
+    'In Progress': 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
+    'Completed':   'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
+    'On Hold':     'text-red-400 bg-red-400/10 border-red-400/20',
+  };
+
+  const defaultProjects = [
+    { id:1, title:'Lecture Management & Scheduling System', desc:'A university scheduling system concept with venue management and timetable clash detection using Python and database design.', tech:['Python','Database Design','UML'], link:'', github:'', status:'Completed', image:'assets/images/project-lecture-new.png' },
+    { id:2, title:'Venue Booking System', desc:'A dynamic booking system for managing venue reservations with availability tracking and scheduling features.', tech:['HTML','CSS','JavaScript','Python'], link:'', github:'', status:'Completed', image:'assets/images/project-booking-new.png' },
+    { id:3, title:'Bead Artwork Ecommerce', desc:'A frontend ecommerce site showcasing Kenyan handcrafted beadwork with product catalog, WhatsApp ordering and lightbox gallery.', tech:['HTML','CSS','JavaScript'], link:'https://kris4509.github.io/bead-artwork-ecommerce-website/', github:'', status:'Live', image:'assets/images/project-ecommerce.png' },
+    { id:4, title:'UniFlow — Exam Card System', desc:'A university web app where students digitally submit exam cards to their class rep for bulk printing and dean stamping.', tech:['Python','Flask','MySQL','Bootstrap 5','M-Pesa API','SQLAlchemy'], link:'', github:'https://github.com/kris4509/uniflow', status:'In Progress', image:'assets/images/project-uniflow.png' },
+  ];
+
+  let projects;
+  try {
+    const stored = localStorage.getItem('adm_projects');
+    projects = stored ? JSON.parse(stored) : defaultProjects;
+    if (!Array.isArray(projects) || projects.length === 0) projects = defaultProjects;
+  } catch(e) {
+    projects = defaultProjects;
+  }
+
+  grid.innerHTML = projects.map((p, i) => {
+    const delay = ['', 'delay-100', 'delay-200', 'delay-300'][i % 4];
+    const statusClass = statusColors[p.status] || statusColors['Completed'];
+    const techBadges = p.tech.slice(0, 5).map(t =>
+      `<span class="text-xs px-3 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 font-medium">${t}</span>`
+    ).join('');
+
+    const imgBlock = p.image
+      ? `<img src="${p.image}" alt="${p.title}" class="project-image w-full h-full object-cover">`
+      : `<div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+           <span class="text-slate-500 text-sm font-mono">${p.title.slice(0,2).toUpperCase()}</span>
+         </div>`;
+
+    const liveBtn = p.link
+      ? `<a href="${p.link}" target="_blank" class="flex-1 py-2.5 px-4 bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-bold rounded-xl text-center text-sm hover:opacity-90 transition-all">Live Demo</a>`
+      : `<span class="flex-1 py-2.5 px-4 bg-white/5 text-slate-500 font-bold rounded-xl text-center text-sm cursor-not-allowed">No Live Demo</span>`;
+
+    const repoBtn = p.github
+      ? `<a href="${p.github}" target="_blank" class="py-2.5 px-4 glass text-slate-700 dark:text-slate-300 font-bold rounded-xl text-sm border border-white/10 hover:bg-white/10 transition-colors text-center">Repo</a>`
+      : '';
+
+    return `
+      <div class="glass rounded-3xl project-card flex flex-col border border-white/10 reveal ${delay}">
+        <div class="relative h-48 overflow-hidden rounded-t-3xl">
+          ${imgBlock}
+          <div class="absolute inset-0 bg-slate-900/60 opacity-0 project-overlay flex items-center justify-center gap-4 transition-all duration-300">
+            ${p.link ? `<a href="${p.link}" target="_blank" class="p-3 bg-white/10 hover:bg-white/25 rounded-full text-white border border-white/20 transition-colors" title="View Live"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : ''}
+            ${p.github ? `<a href="${p.github}" target="_blank" class="p-3 bg-white/10 hover:bg-white/25 rounded-full text-white border border-white/20 transition-colors" title="View Code"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a>` : ''}
+          </div>
+        </div>
+        <div class="p-6 flex-1 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-purple-500 tracking-wider uppercase">Project</span>
+              <span class="text-xs font-semibold px-2 py-1 rounded-full border ${statusClass}">${p.status}</span>
+            </div>
+            <h4 class="text-xl font-display font-bold mt-1">${p.title}</h4>
+            <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mt-3">${p.desc}</p>
+            <div class="flex flex-wrap gap-2 mt-4">${techBadges}</div>
+          </div>
+          <div class="flex items-center gap-3 mt-6 pt-4 border-t border-slate-500/10 dark:border-white/5">
+            ${liveBtn}
+            ${repoBtn}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Re-run reveal observer on new cards
+  if (window.revealObserver) {
+    grid.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
+  }
+})();
+
+// ===== Portfolio Data Sync =====
+// Reads ALL admin dashboard data from localStorage and updates the live portfolio
+(function syncPortfolioFromAdmin() {
+  // ── Load data ──
+  let profile, skills;
+  try {
+    const sp = localStorage.getItem('adm_profile');
+    const ss = localStorage.getItem('adm_skills');
+    profile = sp ? JSON.parse(sp) : null;
+    skills  = ss ? JSON.parse(ss) : null;
+  } catch(e) { profile = null; skills = null; }
+
+  // ── Sync Profile ──
+  if (profile) {
+    // Hero section
+    const heroName = document.getElementById('hero-name');
+    if (heroName) heroName.textContent = profile.name.split(' ')[0]; // first name only
+
+    const heroBio = document.getElementById('hero-bio');
+    if (heroBio && profile.bio) heroBio.textContent = profile.bio;
+
+    const heroAvailText = document.getElementById('hero-avail-text');
+    const heroAvailBadge = document.getElementById('hero-avail-badge');
+    if (heroAvailText && heroAvailBadge) {
+      heroAvailText.textContent = profile.available ? 'Available for Freelance & Internships' : 'Not Currently Available';
+      heroAvailBadge.style.opacity = profile.available ? '1' : '0.5';
+    }
+
+    // Contact section
+    const contactEmail = document.getElementById('contact-email');
+    if (contactEmail) {
+      contactEmail.textContent = profile.email;
+      contactEmail.href = 'mailto:' + profile.email;
+    }
+
+    const contactLocation = document.getElementById('contact-location');
+    if (contactLocation) contactLocation.textContent = profile.location;
+  }
+
+  // ── Sync Skills ──
+  if (skills && Array.isArray(skills) && skills.length > 0) {
+    const ringColors = {
+      'HTML5':'#f97316','CSS3 & Tailwind':'#3b82f6','JavaScript':'#eab308',
+      'Python & Flask':'#6366f1','Python':'#6366f1','Flask':'#6366f1',
+      'Java':'#ef4444','Bootstrap 5':'#a855f7',
+      'MySQL':'#f97316','SQLAlchemy ORM':'#a855f7','SQLAlchemy':'#a855f7','SQL':'#3b82f6',
+      'Git & GitHub':'#94a3b8','Vercel':'#e2e8f0','GitHub Pages':'#a855f7',
+      'Linux & Terminal':'#3b82f6','REST APIs':'#22c55e','M-Pesa Daraja API':'#10b981',
+    };
+    const defaultColor = '#7c3aed';
+
+    function buildRingCard(s) {
+      const color = ringColors[s.name] || defaultColor;
+      const circumference = 201;
+      const offset = circumference - (s.level / 100) * circumference;
+      const hoverColor = color + '66';
+      return `
+        <div class="skill-ring-card flex flex-col items-center gap-3 glass p-5 rounded-3xl border border-white/10 hover:-translate-y-1 transition-all duration-300 group" style="--hover-border:${hoverColor}">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="6" class="text-slate-200 dark:text-slate-700"/>
+              <circle cx="40" cy="40" r="32" fill="none" stroke="${color}" stroke-width="6" stroke-linecap="round"
+                stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" class="skill-ring-fill transition-all duration-1000"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-xs font-bold" style="color:${color}">${s.level}%</span>
+            </div>
+          </div>
+          <div class="text-center">
+            <p class="font-bold text-sm">${s.name}</p>
+            <p class="text-xs text-slate-500">${s.category}</p>
+          </div>
+        </div>`;
+    }
+
+    const langs = skills.filter(s => s.category === 'Languages');
+    const dbs   = skills.filter(s => s.category === 'Databases');
+    const tools = skills.filter(s => s.category === 'Tools');
+
+    const panelLang = document.getElementById('panel-languages');
+    const panelDb   = document.getElementById('panel-databases');
+    const panelTool = document.getElementById('panel-tools');
+
+    if (panelLang && langs.length) panelLang.innerHTML = langs.map(buildRingCard).join('');
+    if (panelDb   && dbs.length)   panelDb.innerHTML   = dbs.map(buildRingCard).join('');
+    if (panelTool && tools.length) panelTool.innerHTML = tools.map(buildRingCard).join('');
+  }
+})();
